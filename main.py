@@ -1,6 +1,5 @@
 import yfinance as yf
 from google import genai
-from google.genai import types
 import os
 import glob
 from datetime import datetime
@@ -39,7 +38,6 @@ print("📡 Descargando precios...")
 
 for nombre, ticker in activos.items():
     try:
-        # Usamos la sesión con curl_cffi
         ticker_obj = yf.Ticker(ticker, session=session)
         hist = ticker_obj.history(period="2d")
         
@@ -57,21 +55,7 @@ for nombre, ticker in activos.items():
         datos_texto += f"- {nombre}: No disponible temporalmente\n"
         print(f"  ❌ {nombre}: {str(e)[:60]}")
 
-# Si no se pudo obtener ningún dato, usamos datos de respaldo
-if len(datos_texto.split('\n')) <= 2:
-    print("⚠️ No se pudieron obtener datos de Yahoo. Usando valores de respaldo...")
-    datos_texto += """
-- S&P 500: 5,300.00 (🔴 -0.50%)
-- Nasdaq 100: 18,600.00 (🔴 -0.30%)
-- DAX: 18,700.00 (🟢 +0.10%)
-- EUR/USD: 1.0800 (🔴 -0.10%)
-- DXY: 105.00 (🟢 +0.20%)
-- Oro: 2,350.00 (🔴 -1.00%)
-- Petróleo WTI: 77.00 (🔴 -0.50%)
-- Bitcoin: 68,000.00 (🔴 -1.50%)
-"""
-
-print("\n🧠 Generando informe con Gemini (nueva SDK)...")
+print("\n🧠 Generando informe con Gemini (modelo 2.5 Flash)...")
 
 # ==========================================
 # 3. PROMPT PROFESIONAL
@@ -109,9 +93,9 @@ REGLAS:
 - HTML autocontenible (CSS inline)
 """
 
-# Llamada a la nueva SDK de Gemini
+# 🔥 CORRECCIÓN APLICADA AQUÍ: modelo actualizado a gemini-2.5-flash
 response = client.models.generate_content(
-    model="gemini-2.0-flash-exp",  # Modelo más nuevo y estable
+    model="gemini-2.5-flash",
     contents=prompt_completo
 )
 
@@ -147,7 +131,7 @@ print("📄 Generando landing page...")
 archivos_hist = sorted(glob.glob("historico/*.html"), reverse=True)
 
 lista_enlaces = ""
-for ruta in archivos_hist[:20]:  # Mostrar últimos 20
+for ruta in archivos_hist[:20]:
     nombre_archivo = os.path.basename(ruta)
     fecha_archivo = nombre_archivo.replace(".html", "")
     fecha_formateada = fecha_archivo.replace("-", "/")
