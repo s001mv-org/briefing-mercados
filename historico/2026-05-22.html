@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Briefing Diario de Mercados - 22 de Mayo de 2026</title>
+    <style>
+        /* Base Styles for Bloomberg Dark Mode */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #0d1117; /* body background */
+            color: #c9d1d9; /* body text */
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 1180px;
+            width: 100%;
+            border: 1px solid #30363d; /* general borders */
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #161b22; /* slightly darker for the main container */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        h1, h2, h3 {
+            color: #c9d1d9;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        h1 { font-size: 2.2em; text-align: center; padding-top: 20px;}
+        h2 { font-size: 1.8em; margin-top: 30px; padding-left: 20px; }
+        h3 { font-size: 1.4em; }
+
+        section {
+            padding: 20px;
+            border-bottom: 1px solid #30363d;
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Utility Colors */
+        .positive { color: #00d4aa; } /* up */
+        .negative { color: #ff4757; } /* down */
+        .accent-text { color: #58a6ff; } /* accents */
+
+        /* Header */
+        header {
+            background-color: #21262d; /* table header / dark bar */
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #30363d;
+        }
+        header p {
+            font-size: 1.1em;
+            color: #90a0b0;
+        }
+
+        /* Executive Summary */
+        .executive-summary ul {
+            list-style: none;
+            padding-left: 20px;
+            margin: 0;
+        }
+        .executive-summary li {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        /* Table Styles */
+        table {
+            width: calc(100% - 40px); /* Adjust for padding */
+            margin: 20px;
+            border-collapse: collapse;
+            background-color: #161b22; /* tables background */
+            border: 1px solid #30363d;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+        th {
+            background-color: #21262d; /* table header */
+            font-weight: bold;
+            color: #c9d1d9;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tbody tr:hover {
+            background-color: #1f2731;
+        }
+
+        /* Geopolitical Context */
+        .geopolitical-context-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 0 20px 20px 20px;
+        }
+        .callout {
+            background-color: #1f2731; /* slightly lighter than body */
+            border: 1px solid #30363d;
+            border-left: 4px solid #58a6ff; /* accent color */
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .callout h3 {
+            color: #58a6ff;
+            margin-top: 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #30363d;
+            font-size: 1.2em;
+        }
+        .callout p {
+            margin-bottom: 0;
+            font-size: 0.9em;
+        }
+
+        /* Risk Analysis */
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 0 20px 20px 20px;
+        }
+        .risk-item {
+            background-color: #1f2731;
+            border: 1px solid #30363d;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .risk-item h3 {
+            color: #58a6ff;
+            margin-top: 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #30363d;
+            font-size: 1.2em;
+        }
+        .risk-item p {
+            font-size: 0.9em;
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #6a737d;
+            border-top: 1px solid #30363d;
+            background-color: #21262d;
+        }
+
+        /* SVG Chart Specifics */
+        .chart-container {
+            padding: 20px;
+            text-align: center;
+            overflow-x: auto; /* In case many bars */
+        }
+        .chart-container h2 {
+            padding-left: 0; /* Center title */
+            border-bottom: none;
+        }
+        .chart {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        .bar-label {
+            font-size: 10px;
+            fill: #c9d1d9;
+            text-anchor: middle;
+        }
+        .bar-value {
+            font-size: 9px;
+            fill: #c9d1d9;
+            text-anchor: middle;
+            font-weight: bold;
+        }
+        .baseline {
+            stroke: #30363d;
+            stroke-width: 1;
+        }
+        .grid-line {
+            stroke: #30363d;
+            stroke-width: 0.5;
+            stroke-dasharray: 2 2;
+        }
+        .grid-label {
+            font-size: 8px;
+            fill: #6a737d;
+            text-anchor: end;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.5em; }
+            h3 { font-size: 1.2em; }
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+            section {
+                padding: 15px;
+            }
+            .geopolitical-context-grid, .risk-grid {
+                grid-template-columns: 1fr;
+                padding: 0 15px 15px 15px;
+            }
+            table {
+                width: calc(100% - 30px);
+                margin: 15px;
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+            .chart-container {
+                padding: 15px;
+            }
+            .bar-label { font-size: 9px; }
+            .bar-value { font-size: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Briefing Diario de Mercados</h1>
+            <p style="color: #90a0b0;">22 de Mayo de 2026</p>
+        </header>
+
+        <section class="executive-summary">
+            <h2>Resumen Ejecutivo</h2>
+            <ul>
+                <li>Los mercados de renta variable europeos y estadounidenses cerraron con ganancias moderadas, liderados por un robusto avance del DAX, señalando un sentimiento positivo de riesgo en las economías desarrolladas.</li>
+                <li>El dólar estadounidense mostró fortaleza frente a sus principales pares, con el par EUR/USD retrocediendo y el DXY registrando un incremento, lo que podría indicar una demanda sostenida por el activo refugio o diferenciales de tipos favorables.</li>
+                <li>Las materias primas presentaron un comportamiento mixto: el petróleo WTI subió en medio de posibles preocupaciones sobre la oferta o una perspectiva de demanda resiliente, mientras que el oro retrocedió.</li>
+                <li>El mercado de criptoactivos experimentó una corrección notable, con Bitcoin registrando una caída significativa que subraya la inherente volatilidad y la sensibilidad a flujos de capital en el sector.</li>
+                <li>La agenda macroeconómica y los riesgos geopolíticos continúan siendo focos de atención, con el mercado evaluando la sostenibilidad del crecimiento global y las decisiones de política monetaria en un entorno cambiante.</li>
+            </ul>
+        </section>
+
+        <section class="quotation-table">
+            <h2>Cotizaciones Clave (24h)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Activo</th>
+                        <th>Precio</th>
+                        <th>Variación (24h)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>S&P 500</td>
+                        <td>7473.47</td>
+                        <td class="positive">🟢 +0.37%</td>
+                    </tr>
+                    <tr>
+                        <td>Nasdaq 100</td>
+                        <td>29481.64</td>
+                        <td class="positive">🟢 +0.42%</td>
+                    </tr>
+                    <tr>
+                        <td>DAX</td>
+                        <td>24888.56</td>
+                        <td class="positive">🟢 +1.15%</td>
+                    </tr>
+                    <tr>
+                        <td>EUR/USD</td>
+                        <td>1.16</td>
+                        <td class="negative">🔴 -0.18%</td>
+                    </tr>
+                    <tr>
+                        <td>DXY</td>
+                        <td>99.32</td>
+                        <td class="positive">🟢 +0.13%</td>
+                    </tr>
+                    <tr>
+                        <td>Oro (Futuro)</td>
+                        <td>4510.50</td>
+                        <td class="negative">🔴 -0.65%</td>
+                    </tr>
+                    <tr>
+                        <td>Petróleo WTI</td>
+                        <td>97.00</td>
+                        <td class="positive">🟢 +0.67%</td>
+                    </tr>
+                    <tr>
+                        <td>Bitcoin</td>
+                        <td>75949.35</td>
+                        <td class="negative">🔴 -2.05%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="chart-container">
+            <h2>Variación % (24h) - Gráfico de Barras</h2>
+            <div class="chart">
+                <svg viewBox="0 -150 700 300" preserveAspectRatio="xMidYMid meet" width="100%" height="auto">
+                    <!-- Base line at 0% -->
+                    <line x1="50" y1="0" x2="650" y2="0" class="baseline" />
+
+                    <!-- Grid lines and labels -->
+                    <line x1="50" y1="-102.5" x2="650" y2="-102.5" class="grid-line" />
+                    <text x="45" y="-102.5" class="grid-label">-2.05%</text>
+                    <line x1="50" y1="-50" x2="650" y2="-50" class="grid-line" />
+                    <text x="45" y="-50" class="grid-label">-1.00%</text>
+                    <text x="45" y="0" class="grid-label">0.00%</text>
+                    <line x1="50" y1="50" x2="650" y2="50" class="grid-line" />
+                    <text x="45" y="50" class="grid-label">+1.00%</text>
+                    <line x1="50" y1="57.5" x2="650" y2="57.5" class="grid-line" />
+                    <text x="45" y="57.5" class="grid-label">+1.15%</text>
+
+
+                    <!-- Bar Data (Scale: 1% = 50 units) -->
+                    <!-- S&P 500: 0.37% (height = 18.5) -->
+                    <rect x="70" y="0" width="40" height="18.5" fill="#00d4aa" transform="scale(1,-1)" />
+                    <text x="90" y="25" class="bar-label">S&P 500</text>
+                    <text x="90" y="-23.5" class="bar-value positive">+0.37%</text>
+
+                    <!-- Nasdaq 100: 0.42% (height = 21) -->
+                    <rect x="140" y="0" width="40" height="21" fill="#00d4aa" transform="scale(1,-1)" />
+                    <text x="160" y="25" class="bar-label">Nasdaq 100</text>
+                    <text x="160" y="-26" class="bar-value positive">+0.42%</text>
+
+                    <!-- DAX: 1.15% (height = 57.5) -->
+                    <rect x="210" y="0" width="40" height="57.5" fill="#00d4aa" transform="scale(1,-1)" />
+                    <text x="230" y="25" class="bar-label">DAX</text>
+                    <text x="230" y="-62.5" class="bar-value positive">+1.15%</text>
+
+                    <!-- EUR/USD: -0.18% (height = 9) -->
+                    <rect x="280" y="0" width="40" height="9" fill="#ff4757" />
+                    <text x="300" y="25" class="bar-label">EUR/USD</text>
+                    <text x="300" y="19" class="bar-value negative">-0.18%</text>
+
+                    <!-- DXY: 0.13% (height = 6.5) -->
+                    <rect x="350" y="0" width="40" height="6.5" fill="#00d4aa" transform="scale(1,-1)" />
+                    <text x="370" y="25" class="bar-label">DXY</text>
+                    <text x="370" y="-11.5" class="bar-value positive">+0.13%</text>
+
+                    <!-- Oro (Futuro): -0.65% (height = 32.5) -->
+                    <rect x="420" y="0" width="40" height="32.5" fill="#ff4757" />
+                    <text x="440" y="25" class="bar-label">Oro</text>
+                    <text x="440" y="42.5" class="bar-value negative">-0.65%</text>
+
+                    <!-- Petróleo WTI: 0.67% (height = 33.5) -->
+                    <rect x="490" y="0" width="40" height="33.5" fill="#00d4aa" transform="scale(1,-1)" />
+                    <text x="510" y="25" class="bar-label">Petróleo WTI</text>
+                    <text x="510" y="-38.5" class="bar-value positive">+0.67%</text>
+
+                    <!-- Bitcoin: -2.05% (height = 102.5) -->
+                    <rect x="560" y="0" width="40" height="102.5" fill="#ff4757" />
+                    <text x="580" y="25" class="bar-label">Bitcoin</text>
+                    <text x="580" y="112.5" class="bar-value negative">-2.05%</text>
+                </svg>
+            </div>
+        </section>
+
+        <section>
+            <h2>Lectura por Activo</h2>
+            <div>
+                <h3>S&P 500</h3>
+                <p>El índice de referencia estadounidense mostró una jornada de avance moderado, consolidando el optimismo en sectores clave. La resiliencia subyacente del mercado se mantiene como un factor de apoyo, aunque los catalizadores para movimientos direccionales mayores parecen limitados en el corto plazo.</p>
+            </div>
+            <div>
+                <h3>Nasdaq 100</h3>
+                <p>Las acciones tecnológicas y de crecimiento continuaron con su tendencia positiva, aunque con un momentum contenido. La fortaleza del sector tecnológico sugiere una confianza persistente en la innovación y la adaptación empresarial, a pesar de las valoraciones elevadas y los desafíos macroeconómicos.</p>
+            </div>
+            <div>
+                <h3>DAX</h3>
+                <p>El índice alemán lideró las ganancias en Europa, con un movimiento significativo al alza que refleja un apetito por el riesgo renovado en la Eurozona. Este desempeño podría estar impulsado por datos económicos regionales favorables o expectativas de políticas acomodaticias del BCE.</p>
+            </div>
+            <div>
+                <h3>EUR/USD</h3>
+                <p>El par de divisas mostró una ligera depreciación del euro frente al dólar, lo que indica una potencial fortaleza del dólar estadounidense o cierta cautela en la Eurozona. Los diferenciales de tipos de interés o el tono de los bancos centrales continúan siendo factores clave que influyen en esta dinámica.</p>
+            </div>
+            <div>
+                <h3>DXY (Índice del Dólar)</h3>
+                <p>El dólar se fortaleció ligeramente, en línea con el retroceso del EUR/USD. Esta apreciación sugiere que el dólar continúa siendo un activo refugio en un entorno de incertidumbre o que las expectativas sobre la política monetaria de la Reserva Federal están generando un soporte adicional.</p>
+            </div>
+            <div>
+                <h3>Oro (Futuro)</h3>
+                <p>El metal precioso experimentó una corrección a la baja, lo que podría estar asociado con un aumento en los rendimientos de los bonos o una menor demanda de activos refugio. La fortaleza del dólar también tiende a presionar al oro, al encarecerlo para tenedores de otras divisas.</p>
+            </div>
+            <div>
+                <h3>Petróleo WTI</h3>
+                <p>Los precios del crudo WTI registraron un avance, impulsados probablemente por una combinación de optimismo sobre la demanda global y posibles preocupaciones sobre la estabilidad de la oferta. La dinámica entre la producción y el consumo sigue siendo un factor crítico para el sector energético.</p>
+            </div>
+            <div>
+                <h3>Bitcoin</h3>
+                <p>La criptomoneda líder sufrió una caída considerable, subrayando la volatilidad inherente a este activo. Movimientos de esta magnitud son comunes en el mercado de criptoactivos y pueden ser el resultado de factores técnicos, noticias regulatorias o un cambio en el sentimiento general de riesgo.</p>
+            </div>
+        </section>
+
+        <section class="geopolitical-context">
+            <h2>Contexto Geopolítico</h2>
+            <div class="geopolitical-context-grid">
+                <div class="callout">
+                    <h3>Dinámicas en la Cadena de Suministro Global</h3>
+                    <p>Las tensiones comerciales persistentes y las políticas de relocalización continúan reconfigurando las cadenas de suministro. Este proceso genera tanto eficiencias como vulnerabilidades, con implicaciones directas en los costes de producción y la resiliencia empresarial, manteniendo una prima de riesgo sobre ciertos sectores.</p>
+                </div>
+                <div class="callout">
+                    <h3>Navegando la Transición Energética</h3>
+                    <p>La carrera global hacia fuentes de energía más sostenibles sigue impulsando inversiones y redefiniendo mercados. Sin embargo, las interrupciones en el suministro tradicional y la infraestructura de energías renovables presentan desafíos continuos que pueden impactar los precios de los commodities y la estabilidad económica a nivel regional.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="macro-calendar">
+            <h2>Calendario Macroeconómico Próximo</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora (CET)</th>
+                        <th>Evento</th>
+                        <th>Relevancia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>23/05/2026</td>
+                        <td>09:00</td>
+                        <td>PMI Manufacturero Eurozona (Prel.)</td>
+                        <td>Media</td>
+                    </tr>
+                    <tr>
+                        <td>23/05/2026</td>
+                        <td>14:30</td>
+                        <td>IPC EE.UU. (Abril)</td>
+                        <td>Alta</td>
+                    </tr>
+                    <tr>
+                        <td>24/05/2026</td>
+                        <td>10:00</td>
+                        <td>Índice IFO Clima Empresarial Alemania</td>
+                        <td>Media</td>
+                    </tr>
+                    <tr>
+                        <td>26/05/2026</td>
+                        <td>16:00</td>
+                        <td>Confianza del Consumidor GFK Reino Unido</td>
+                        <td>Baja</td>
+                    </tr>
+                    <tr>
+                        <td>27/05/2026</td>
+                        <td>20:00</td>
+                        <td>Actas de la Fed (FOMC Minutes)</td>
+                        <td>Alta</td>
+                    </tr>
+                    <tr>
+                        <td>28/05/2026</td>
+                        <td>11:00</td>
+                        <td>Discurso de la Presidenta del BCE</td>
+                        <td>Media</td>
+                    </tr>
+                    <tr>
+                        <td>29/05/2026</td>
+                        <td>14:30</td>
+                        <td>Solicitudes iniciales de desempleo EE.UU.</td>
+                        <td>Media</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="risk-analysis">
+            <h2>Análisis de Riesgos Clave</h2>
+            <div class="risk-grid">
+                <div class="risk-item">
+                    <h3>Inflación Persistente</h3>
+                    <p>La capacidad de los bancos centrales para contener las presiones inflacionarias sigue siendo una preocupación. Un repunte inesperado podría forzar un endurecimiento monetario más agresivo, impactando el crecimiento y la valoración de los activos, especialmente en renta fija.</p>
+                </div>
+                <div class="risk-item">
+                    <h3>Ralentización del Crecimiento Global</h3>
+                    <p>Factores como las altas tasas de interés, la incertidumbre geopolítica y la fragilidad del consumo en algunas regiones podrían desencadenar una desaceleración económica global más pronunciada de lo anticipado. Esto afectaría los beneficios corporativos y el sentimiento del mercado bursátil.</p>
+                </div>
+                <div class="risk-item">
+                    <h3>Endurecimiento Monetario Inesperado</h3>
+                    <p>Cualquier indicio de que los principales bancos centrales consideren una postura más restrictiva de lo que el mercado ya ha descontado podría generar volatilidad significativa. Esto afectaría especialmente a los activos de riesgo, al encarecer el acceso a capital y reducir el atractivo de inversiones especulativas.</p>
+                </div>
+                <div class="risk-item">
+                    <h3>Fragmentación Geopolítica</h3>
+                    <p>El aumento de las tensiones entre bloques económicos y políticos podría desestabilizar el comercio internacional y las inversiones transfronterizas. Escenarios de conflicto regional o disrupciones en rutas comerciales tendrían un impacto profundo en la confianza del inversor y en la dinámica de los precios de las materias primas.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Goldman Sachs & Co. Todos los derechos reservados.</p>
+            <p style="margin-top: 5px;">Este briefing es solo para fines informativos y no constituye una recomendación de inversión, asesoramiento financiero, legal o fiscal. La información contenida se considera fiable pero no se garantiza su exactitud ni exhaustividad. Las opiniones expresadas pueden cambiar sin previo aviso y reflejan el análisis de mercado en la fecha indicada.</p>
+        </footer>
+    </div>
+</body>
+</html>
