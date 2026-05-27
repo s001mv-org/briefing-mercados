@@ -1,3 +1,4 @@
 yfinance
-google-genai
 curl_cffi
+openai
+google-genai
