@@ -10,6 +10,58 @@ from curl_cffi import requests
 # ==========================================
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
+# ==========================================
+# 2. FUNCIÓN: OBTENER EL MEJOR MODELO DISPONIBLE
+# ==========================================
+def get_best_model():
+    """
+    Recorre la lista de modelos disponibles y elige el mejor
+    que soporte generateContent.
+    
+    Orden de preferencia:
+    1. Gemini 3.1 Flash Lite (GA, más nuevo)
+    2. Gemini 3.1 Pro Preview (más potente)
+    3. Gemini 2.5 Pro (estable)
+    4. Cualquier otro que soporte generateContent
+    """
+    print("🔍 Listando modelos disponibles...")
+    
+    preferred_models = [
+        "gemini-3.1-flash-lite",      # GA desde mayo 2026, rápido
+        "gemini-3.1-pro-preview",      # Más potente
+        "gemini-2.5-pro",              # Estable
+        "gemini-2.5-flash",            # Alternativa rápida
+    ]
+    
+    available_models = []
+    
+    # Obtener todos los modelos de la API
+    for model in client.models.list():
+        # Verificar que soporte generateContent
+        if "generateContent" in model.supported_actions:
+            model_name = model.name.replace("models/", "")
+            available_models.append(model_name)
+            print(f"  📌 Disponible: {model_name}")
+    
+    # Buscar el mejor según orden de preferencia
+    for preferred in preferred_models:
+        if preferred in available_models:
+            print(f"✅ Seleccionado: {preferred}")
+            return preferred
+    
+    # Si ninguno de los preferidos está disponible, usar el primero
+    if available_models:
+        fallback = available_models[0]
+        print(f"⚠️ Usando fallback: {fallback}")
+        return fallback
+    
+    # Último recurso (no debería pasar)
+    print("❌ No se encontraron modelos disponibles")
+    return "gemini-1.5-pro"  # Fallback extremo
+
+# ==========================================
+# 3. HORA MADRID
+# ==========================================
 def get_madrid_time():
     now = datetime.now()
     is_summer = (now.month > 3 and now.month < 10) or (now.month == 3 and now.day >= 30) or (now.month == 10 and now.day <= 26)
@@ -23,7 +75,7 @@ fecha_legible = datetime.now().strftime("%d/%m/%Y")
 hora_madrid = get_madrid_time()
 
 # ==========================================
-# 2. DESCARGAR PRECIOS
+# 4. DESCARGAR PRECIOS
 # ==========================================
 activos = {
     "S&P 500": "^GSPC",
@@ -73,7 +125,7 @@ for nombre in activos.keys():
         datos_mercado += f"- {nombre}: dato no disponible\n"
 
 # ==========================================
-# 3. PROMPT COMPLETO (versión simplificada pero completa)
+# 5. PROMPT (versión simplificada)
 # ==========================================
 prompt_completo = f"""
 {datos_mercado}
@@ -109,32 +161,17 @@ REGLAS:
 - HTML autocontenible (CSS inline)
 """
 
-print("\n🧠 Generando briefing con Gemini...")
+# ==========================================
+# 6. GENERAR BRIEFING CON MODELO AUTOSELECCIONADO
+# ==========================================
+print("\n🧠 Seleccionando modelo Gemini...")
+modelo_elegido = get_best_model()
 
-# 🔥 CORRECCIÓN AQUÍ - Modelos que SÍ funcionan en mayo 2026
-try:
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=prompt_completo
-    )
-    print("✅ Usando modelo: gemini-2.0-flash")
-except Exception as e:
-    print(f"⚠️ Error con gemini-2.0-flash: {e}")
-    print("🔄 Intentando con gemini-1.5-pro...")
-    try:
-        response = client.models.generate_content(
-            model="gemini-1.5-pro",
-            contents=prompt_completo
-        )
-        print("✅ Usando modelo: gemini-1.5-pro")
-    except Exception as e2:
-        print(f"⚠️ Error con gemini-1.5-pro: {e2}")
-        print("🔄 Último intento con gemini-2.0-flash-lite...")
-        response = client.models.generate_content(
-            model="gemini-2.0-flash-lite",
-            contents=prompt_completo
-        )
-        print("✅ Usando modelo: gemini-2.0-flash-lite")
+print(f"🚀 Generando briefing con {modelo_elegido}...")
+response = client.models.generate_content(
+    model=modelo_elegido,
+    contents=prompt_completo
+)
 
 html_informe = response.text
 
@@ -148,7 +185,7 @@ html_informe = html_informe.strip()
 print("✅ Briefing HTML generado correctamente")
 
 # ==========================================
-# 4. GUARDAR ARCHIVOS
+# 7. GUARDAR ARCHIVOS
 # ==========================================
 os.makedirs("historico", exist_ok=True)
 
@@ -161,7 +198,7 @@ with open(f"historico/{fecha_hoy}.html", "w", encoding="utf-8") as f:
 print(f"  ✓ Guardado: historico/{fecha_hoy}.html")
 
 # ==========================================
-# 5. LANDING PAGE
+# 8. LANDING PAGE
 # ==========================================
 archivos_hist = sorted(glob.glob("historico/*.html"), reverse=True)
 lista_enlaces = ""
@@ -197,4 +234,5 @@ with open("index.html", "w", encoding="utf-8") as f:
 print("✅ Landing page guardada: index.html")
 print("=" * 50)
 print("🎉 ¡BRIEFING COMPLETO GENERADO CON ÉXITO!")
+print(f"📌 Modelo utilizado: {modelo_elegido}")
 print("=" * 50)
