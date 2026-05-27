@@ -11,53 +11,38 @@ from curl_cffi import requests
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 # ==========================================
-# 2. FUNCIÓN: OBTENER EL MEJOR MODELO DISPONIBLE
+# 2. FUNCIÓN: OBTENER EL MEJOR MODELO
 # ==========================================
 def get_best_model():
-    """
-    Recorre la lista de modelos disponibles y elige el mejor
-    que soporte generateContent.
-    
-    Orden de preferencia:
-    1. Gemini 3.1 Flash Lite (GA, más nuevo)
-    2. Gemini 3.1 Pro Preview (más potente)
-    3. Gemini 2.5 Pro (estable)
-    4. Cualquier otro que soporte generateContent
-    """
     print("🔍 Listando modelos disponibles...")
-    
     preferred_models = [
-        "gemini-3.1-flash-lite",      # GA desde mayo 2026, rápido
-        "gemini-3.1-pro-preview",      # Más potente
-        "gemini-2.5-pro",              # Estable
-        "gemini-2.5-flash",            # Alternativa rápida
+        "gemini-3.1-flash-lite",
+        "gemini-3.1-pro-preview",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-1.5-pro",
     ]
-    
     available_models = []
+    try:
+        for model in client.models.list():
+            if hasattr(model, 'supported_actions') and "generateContent" in model.supported_actions:
+                model_name = model.name.replace("models/", "")
+                available_models.append(model_name)
+                print(f"  📌 Disponible: {model_name}")
+    except Exception as e:
+        print(f"⚠️ Error listando modelos: {e}")
     
-    # Obtener todos los modelos de la API
-    for model in client.models.list():
-        # Verificar que soporte generateContent
-        if "generateContent" in model.supported_actions:
-            model_name = model.name.replace("models/", "")
-            available_models.append(model_name)
-            print(f"  📌 Disponible: {model_name}")
-    
-    # Buscar el mejor según orden de preferencia
     for preferred in preferred_models:
         if preferred in available_models:
             print(f"✅ Seleccionado: {preferred}")
             return preferred
     
-    # Si ninguno de los preferidos está disponible, usar el primero
     if available_models:
         fallback = available_models[0]
         print(f"⚠️ Usando fallback: {fallback}")
         return fallback
     
-    # Último recurso (no debería pasar)
-    print("❌ No se encontraron modelos disponibles")
-    return "gemini-1.5-pro"  # Fallback extremo
+    return "gemini-1.5-pro"
 
 # ==========================================
 # 3. HORA MADRID
@@ -73,6 +58,8 @@ def get_madrid_time():
 fecha_hoy = datetime.now().strftime("%Y-%m-%d")
 fecha_legible = datetime.now().strftime("%d/%m/%Y")
 hora_madrid = get_madrid_time()
+
+print(f"📅 Fecha: {fecha_legible} | Hora Madrid: {hora_madrid}")
 
 # ==========================================
 # 4. DESCARGAR PRECIOS
@@ -96,7 +83,7 @@ session.headers.update({
 precios = {}
 variaciones = {}
 
-print("📡 Descargando precios en tiempo real...")
+print("📡 Descargando precios...")
 for nombre, ticker in activos.items():
     try:
         ticker_obj = yf.Ticker(ticker, session=session)
@@ -114,93 +101,112 @@ for nombre, ticker in activos.items():
     except Exception as e:
         precios[nombre] = 0
         variaciones[nombre] = 0
-        print(f"  ❌ {nombre}: Error")
+        print(f"  ❌ {nombre}: {str(e)[:50]}")
 
 datos_mercado = "DATOS DE MERCADO ACTUALES:\n"
 for nombre in activos.keys():
     if precios[nombre] != 0:
         signo = "+" if variaciones[nombre] >= 0 else ""
         datos_mercado += f"- {nombre}: {precios[nombre]:.2f} (Var 24h: {signo}{variaciones[nombre]:.2f}%)\n"
-    else:
-        datos_mercado += f"- {nombre}: dato no disponible\n"
 
 # ==========================================
-# 5. PROMPT (versión simplificada)
+# 5. PROMPT
 # ==========================================
 prompt_completo = f"""
 {datos_mercado}
 
 FECHA ACTUAL: {fecha_legible} a las {hora_madrid}
 
-Eres un analista senior de mercados financieros. Genera un briefing profesional en HTML estilo morning note.
+Eres un analista senior de mercados financieros. Genera un briefing profesional en HTML.
 
-ESTRUCTURA OBLIGATORIA DEL HTML:
-1. Header con título, fecha, hora CET y banner de perfil
-2. Resumen ejecutivo (4-5 bullets con "Hecho:", "Lectura:", "Riesgo:")
-3. Snapshot: KPI grid + tabla de 8 activos
-4. Gráfico SVG de barras 24h (verde/rojo)
-5. Lectura por activo (2-3 frases cada uno)
-6. Contexto geopolítico (callouts)
-7. Calendario macro (tabla con badges)
-8. Análisis de riesgos (grid 2x2)
-9. Lectura crítica narrativa dominante
-10. Checklist + footer
+ESTRUCTURA:
+1. Header con título, fecha, hora CET
+2. Resumen ejecutivo (4-5 bullets)
+3. Tabla de cotizaciones (8 activos)
+4. Lectura por activo (2-3 frases cada uno)
+5. Footer con disclaimer
 
-ESTILO VISUAL: dark mode Bloomberg (fondo #0d1117, texto #c9d1d9, acentos #58a6ff, subidas #00d4aa, bajadas #ff4757)
-
-BANNER DE PERFIL:
-<div class="banner-perfil"><strong>Perfil estándar usado.</strong> 8 activos: S&P 500, Nasdaq 100, DAX, EUR/USD, DXY, Oro, Petróleo WTI, Bitcoin.</div>
-
-DISCLAIMER EN FOOTER:
-<footer><p><strong>Aviso.</strong> Este briefing es información general de mercado, no asesoramiento financiero.</p></footer>
+ESTILO: dark mode, fondo #0d1117, texto #c9d1d9, acentos #58a6ff
 
 REGLAS:
-- NO inventes precios. Usa los datos reales que te he proporcionado.
-- NO des recomendaciones de compra/venta.
+- NO inventes precios. Usa los datos reales.
+- NO recomendaciones de compra/venta.
 - Empieza DIRECTAMENTE con <!DOCTYPE html>
-- HTML autocontenible (CSS inline)
 """
 
 # ==========================================
-# 6. GENERAR BRIEFING CON MODELO AUTOSELECCIONADO
+# 6. GENERAR BRIEFING
 # ==========================================
 print("\n🧠 Seleccionando modelo Gemini...")
 modelo_elegido = get_best_model()
 
 print(f"🚀 Generando briefing con {modelo_elegido}...")
-response = client.models.generate_content(
-    model=modelo_elegido,
-    contents=prompt_completo
-)
+try:
+    response = client.models.generate_content(
+        model=modelo_elegido,
+        contents=prompt_completo
+    )
+    html_informe = response.text
+    print(f"📄 HTML recibido, longitud: {len(html_informe)} caracteres")
+except Exception as e:
+    print(f"❌ Error llamando a Gemini: {e}")
+    html_informe = None
 
-html_informe = response.text
+# Verificar que el HTML no esté vacío
+if not html_informe or len(html_informe.strip()) < 100:
+    print("⚠️ HTML vacío o demasiado corto. Usando plantilla de respaldo...")
+    html_informe = f"""<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Briefing {fecha_legible}</title>
+<style>body{{background:#0d1117;color:#c9d1d9;font-family:sans-serif;padding:40px;}}</style>
+</head>
+<body>
+<h1>Briefing de Mercados</h1>
+<p>Fecha: {fecha_legible} | Hora: {hora_madrid}</p>
+<h2>Datos obtenidos</h2>
+<pre>{datos_mercado}</pre>
+<hr>
+<p><strong>Aviso:</strong> Información general, no asesoramiento financiero.</p>
+</body>
+</html>"""
 
-# Limpieza de markdown
+# Limpiar markdown
 if html_informe.startswith("```html"):
     html_informe = html_informe[7:-3]
 elif html_informe.startswith("```"):
     html_informe = html_informe[3:-3]
 html_informe = html_informe.strip()
 
-print("✅ Briefing HTML generado correctamente")
+print(f"✅ Briefing final, longitud: {len(html_informe)} caracteres")
 
 # ==========================================
 # 7. GUARDAR ARCHIVOS
 # ==========================================
-os.makedirs("historico", exist_ok=True)
+print("\n💾 Guardando archivos...")
 
+# Crear carpeta historico si no existe
+os.makedirs("historico", exist_ok=True)
+print("  ✓ Carpeta 'historico' lista")
+
+# Guardar latest.html
 with open("latest.html", "w", encoding="utf-8") as f:
     f.write(html_informe)
 print("  ✓ Guardado: latest.html")
 
-with open(f"historico/{fecha_hoy}.html", "w", encoding="utf-8") as f:
+# Guardar en historico
+historico_path = f"historico/{fecha_hoy}.html"
+with open(historico_path, "w", encoding="utf-8") as f:
     f.write(html_informe)
-print(f"  ✓ Guardado: historico/{fecha_hoy}.html")
+print(f"  ✓ Guardado: {historico_path}")
 
 # ==========================================
 # 8. LANDING PAGE
 # ==========================================
+print("\n📄 Generando landing page...")
+
 archivos_hist = sorted(glob.glob("historico/*.html"), reverse=True)
+print(f"  📁 Encontrados {len(archivos_hist)} archivos en histórico")
+
 lista_enlaces = ""
 for ruta in archivos_hist[:30]:
     nombre = os.path.basename(ruta).replace(".html", "").replace("-", "/")
@@ -230,9 +236,17 @@ li a:hover{{color:#79c0ff;}}
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(landing)
+print("  ✓ Guardado: index.html")
 
-print("✅ Landing page guardada: index.html")
+# ==========================================
+# 9. RESUMEN FINAL
+# ==========================================
+print("\n" + "=" * 50)
+print("📊 RESUMEN DE ARCHIVOS GENERADOS:")
+print(f"  - latest.html: {os.path.getsize('latest.html')} bytes")
+print(f"  - {historico_path}: {os.path.getsize(historico_path)} bytes")
+print(f"  - index.html: {os.path.getsize('index.html')} bytes")
+print(f"  - Total en histórico: {len(archivos_hist)} archivos")
 print("=" * 50)
-print("🎉 ¡BRIEFING COMPLETO GENERADO CON ÉXITO!")
-print(f"📌 Modelo utilizado: {modelo_elegido}")
+print("🎉 ¡PROCESO COMPLETADO CON ÉXITO!")
 print("=" * 50)
