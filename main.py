@@ -10,7 +10,7 @@ from google import genai
 # CONFIGURACIÓN - ELIGE TU MOTOR
 # ==========================================
 # Opciones: "deepseek", "gemini", "auto"
-MOTOR_IA = "deepseek"  # Cambia a "gemini" si quieres volver
+MOTOR_IA = "gemini"  # Cambia a "gemini" si quieres volver
 
 # API Keys (desde GitHub Secrets)
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
