@@ -42,7 +42,6 @@ jobs:
           git commit -m "Briefing diario: $(date +'%Y-%m-%d %H:%M')" || echo "Sin cambios"
           git push origin main
 
-      # 🔥 NUEVO: Mensaje personalizado que GitHub incluirá en sus emails
       - name: Mostrar URL del informe
         if: success()
         run: |
@@ -55,17 +54,5 @@ jobs:
           echo ""
           echo "📄 INFORME DIRECTO DE HOY:"
           echo "   https://s001mv.github.io/briefing-mercados/latest.html"
-          echo ""
-          echo "=========================================="
-
-      - name: Mostrar error si falló
-        if: failure()
-        run: |
-          echo "=========================================="
-          echo "❌ ERROR: El briefing NO se generó"
-          echo "=========================================="
-          echo ""
-          echo "🔍 Revisa los logs en:"
-          echo "   https://github.com/s001mv/briefing-mercados/actions"
           echo ""
           echo "=========================================="
