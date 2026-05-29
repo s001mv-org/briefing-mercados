@@ -1,14 +1,10 @@
 name: Generar Briefing Diario de Mercados
 
 on:
-  # Ejecución automática de lunes a viernes a las 07:00 CET (06:00 UTC en invierno, 05:00 UTC en verano)
   schedule:
-    - cron: '0 5 * * 1-5'   # 05:00 UTC = 07:00 CET invierno / 08:00 CEST verano
-  
-  # Permite ejecución manual desde la interfaz de GitHub
+    - cron: '0 5 * * 1-5'
   workflow_dispatch:
 
-# Permisos necesarios para que el bot pueda escribir archivos y actualizar la web
 permissions:
   contents: write
 
@@ -17,36 +13,34 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # 1. Descargar el código del repositorio
       - name: Checkout del código
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Importante: trae todo el historial para evitar conflictos
 
-      # 2. Configurar Python 3.11
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 3. Instalar dependencias
       - name: Instalar dependencias
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Ejecutar el script principal (genera briefing con IA)
       - name: Ejecutar generador de briefing
         env:
-          # DeepSeek API (motor principal)
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          # Gemini API (fallback opcional - si no está configurada, solo usa DeepSeek)
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main.py
 
-      # 5. Publicar los archivos generados en GitHub Pages
       - name: Publicar en GitHub Pages
         run: |
           git config --global user.name "Bot Financiero"
-          git config --global user.email "bot@briefing-automatico.com"
+          git config --global user.email "bot@briefing.com"
+          
+          # 🔥 SOLUCIÓN: Hacer pull antes de push para resolver conflictos
+          git pull origin main --rebase || true
+          
           git add index.html latest.html historico/
-          git commit -m "Briefing diario: $(date +'%Y-%m-%d %H:%M')" || echo "No hay cambios para commitear"
-          git push
+          git commit -m "Briefing diario: $(date +'%Y-%m-%d %H:%M')" || echo "Sin cambios para commitear"
+          git push origin main
