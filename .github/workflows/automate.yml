@@ -16,7 +16,7 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Importante: trae todo el historial para evitar conflictos
+          fetch-depth: 0
 
       - name: Configurar Python
         uses: actions/setup-python@v5
@@ -37,10 +37,35 @@ jobs:
         run: |
           git config --global user.name "Bot Financiero"
           git config --global user.email "bot@briefing.com"
-          
-          # 🔥 SOLUCIÓN: Hacer pull antes de push para resolver conflictos
           git pull origin main --rebase || true
-          
           git add index.html latest.html historico/
-          git commit -m "Briefing diario: $(date +'%Y-%m-%d %H:%M')" || echo "Sin cambios para commitear"
+          git commit -m "Briefing diario: $(date +'%Y-%m-%d %H:%M')" || echo "Sin cambios"
           git push origin main
+
+      # 🔥 NUEVO: Mensaje personalizado que GitHub incluirá en sus emails
+      - name: Mostrar URL del informe
+        if: success()
+        run: |
+          echo "=========================================="
+          echo "✅ BRIEFING GENERADO CORRECTAMENTE"
+          echo "=========================================="
+          echo ""
+          echo "📊 VER EL INFORME AQUÍ:"
+          echo "   https://s001mv.github.io/briefing-mercados/"
+          echo ""
+          echo "📄 INFORME DIRECTO DE HOY:"
+          echo "   https://s001mv.github.io/briefing-mercados/latest.html"
+          echo ""
+          echo "=========================================="
+
+      - name: Mostrar error si falló
+        if: failure()
+        run: |
+          echo "=========================================="
+          echo "❌ ERROR: El briefing NO se generó"
+          echo "=========================================="
+          echo ""
+          echo "🔍 Revisa los logs en:"
+          echo "   https://github.com/s001mv/briefing-mercados/actions"
+          echo ""
+          echo "=========================================="
