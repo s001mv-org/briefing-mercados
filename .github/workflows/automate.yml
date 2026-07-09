@@ -1,4 +1,4 @@
-name: Generar Briefing Diario de Mercados
+name: Generar Briefing + Dashboard
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  generar-briefing:
+  generar-contenido:
     runs-on: ubuntu-latest
     
     steps:
@@ -28,31 +28,25 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Ejecutar generador de briefing
+      - name: Ejecutar Morning Note
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main.py
+
+      - name: Ejecutar Dashboard
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python dashboard.py
 
       - name: Publicar en GitHub Pages
         run: |
           git config --global user.name "Bot Financiero"
           git config --global user.email "bot@briefing.com"
+          
           git pull origin main --rebase || true
+          
           git add index.html latest.html historico/
-          git commit -m "Briefing diario: $(date +'%Y-%m-%d %H:%M')" || echo "Sin cambios"
+          git add dashboard-latest.html dashboard-historico/
+          
+          git commit -m "Briefing + Dashboard: $(date +'%Y-%m-%d %H:%M')" || echo "Sin cambios"
           git push origin main
-
-      - name: Mostrar URL del informe
-        if: success()
-        run: |
-          echo "=========================================="
-          echo "✅ BRIEFING GENERADO CORRECTAMENTE"
-          echo "=========================================="
-          echo ""
-          echo "📊 VER EL INFORME AQUÍ:"
-          echo "   https://s001mv.github.io/briefing-mercados/"
-          echo ""
-          echo "📄 INFORME DIRECTO DE HOY:"
-          echo "   https://s001mv.github.io/briefing-mercados/latest.html"
-          echo ""
-          echo "=========================================="
