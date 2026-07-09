@@ -6,7 +6,7 @@ from datetime import datetime
 from curl_cffi import requests
 from google import genai
 
-# ==========================================
+# =========================================
 # 1. CONFIGURACIÓN
 # ==========================================
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
