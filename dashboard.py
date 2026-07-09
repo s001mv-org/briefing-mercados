@@ -11,12 +11,13 @@ fecha_hoy = datetime.utcnow().strftime("%Y-%m-%d")
 fecha_legible = datetime.utcnow().strftime("%d/%m/%Y")
 hora_madrid = datetime.utcnow().strftime("%H:%M") + " CEST"
 
-print(f"📊 Generando dashboard para {fecha_legible}")
+print(f"📊 Generando dashboard completo para {fecha_legible}")
 
 # ==========================================
-# 2. DESCARGAR DATOS DE ACCIONES
+# 2. LISTA DE ACCIONES (18 empresas como en el video)
 # ==========================================
 acciones = {
+    # Tecnológicas (10)
     "NVDA": "Nvidia",
     "META": "Meta Platforms",
     "MSFT": "Microsoft",
@@ -27,13 +28,34 @@ acciones = {
     "AMZN": "Amazon",
     "AAPL": "Apple",
     "GOOGL": "Alphabet (Google)",
+    # Financieras (2)
     "V": "Visa",
-    "COST": "Costco",
     "JPM": "JPMorgan Chase",
+    # Consumo (3)
+    "COST": "Costco",
+    "KO": "Coca-Cola",
+    "PG": "Procter & Gamble",
+    # Salud (1)
     "LLY": "Eli Lilly",
+    # Otros (2)
+    "TSLA": "Tesla",
+    "NFLX": "Netflix",
 }
 
-# Configurar sesión para Yahoo Finance
+# Colores por sector (para el gráfico de burbujas)
+sector_colores = {
+    "Technology": "#58a6ff",
+    "Communication Services": "#f0883e",
+    "Consumer Cyclical": "#00d4aa",
+    "Financial Services": "#ff4757",
+    "Healthcare": "#d2a8ff",
+    "Consumer Defensive": "#ffd93d",
+    "N/A": "#8b949e",
+}
+
+# ==========================================
+# 3. DESCARGAR DATOS
+# ==========================================
 session = requests.Session()
 session.headers.update({
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -47,7 +69,7 @@ print("📡 Descargando datos de acciones...")
 for ticker, nombre in acciones.items():
     try:
         t = yf.Ticker(ticker, session=session)
-        hist = t.history(period="1y")
+        hist = t.history(period="2y")
         info = t.info
         
         if len(hist) < 2:
@@ -59,54 +81,175 @@ for ticker, nombre in acciones.items():
         max_52s = float(hist["High"].max())
         caida = ((max_52s - precio) / max_52s) * 100 if max_52s > 0 else 0
         
+        # Retorno anual
+        if len(hist) >= 252:
+            precio_anio = float(hist["Close"].iloc[-252])
+            retorno_anual = ((precio - precio_anio) / precio_anio) * 100
+        else:
+            retorno_anual = 0
+        
         # Fundamentales
         sector = info.get("sector", "N/A")
-        roe = info.get("returnOnEquity", 0) * 100
+        industry = info.get("industry", "N/A")
+        market_cap = info.get("marketCap", 0)
+        market_cap_b = round(market_cap / 1e9, 2) if market_cap else 0
+        
+        forward_pe = info.get("forwardPE", 0)
+        trailing_pe = info.get("trailingPE", 0)
+        peg = info.get("pegRatio", 0)
+        ev_ebitda = info.get("enterpriseToEbitda", 0)
+        fcf_yield = info.get("freeCashflowYield", 0) * 100 if info.get("freeCashflowYield") else 0
+        
         revenue_growth = info.get("revenueGrowth", 0) * 100
         earnings_growth = info.get("earningsGrowth", 0) * 100
-        forward_pe = info.get("forwardPE", 0)
+        gross_margins = info.get("grossMargins", 0) * 100
+        operating_margins = info.get("operatingMargins", 0) * 100
+        net_margins = info.get("profitMargins", 0) * 100
+        
+        roe = info.get("returnOnEquity", 0) * 100
+        roic = info.get("returnOnAssets", 0) * 100
+        debt_to_equity = info.get("debtToEquity", 0)
+        current_ratio = info.get("currentRatio", 0)
+        
         recommendation = info.get("recommendationKey", "N/A")
         target_mean = info.get("targetMeanPrice", 0)
+        target_high = info.get("targetHighPrice", 0)
+        target_low = info.get("targetLowPrice", 0)
+        number_analysts = info.get("numberOfAnalystOpinions", 0)
         
-        # Calcular score (0-100)
-        score_value = 0
+        dividend_yield = info.get("dividendYield", 0) * 100 if info.get("dividendYield") else 0
+        
+        # ==========================================
+        # 4. CALCULAR SCORES (4 pilares)
+        # ==========================================
+        # VALUE (0-25)
+        value_score = 0
         if forward_pe and forward_pe > 0:
-            if forward_pe < 15: score_value += 25
-            elif forward_pe < 20: score_value += 18
-            elif forward_pe < 25: score_value += 10
-            
-        score_growth = 0
-        if revenue_growth > 30: score_growth += 25
-        elif revenue_growth > 20: score_growth += 18
-        elif revenue_growth > 10: score_growth += 10
+            if forward_pe < 10: value_score += 8
+            elif forward_pe < 15: value_score += 6
+            elif forward_pe < 20: value_score += 4
+            elif forward_pe < 25: value_score += 2
+        if peg and peg > 0:
+            if peg < 0.5: value_score += 7
+            elif peg < 1: value_score += 5
+            elif peg < 1.5: value_score += 3
+            elif peg < 2: value_score += 1
+        if ev_ebitda and ev_ebitda > 0:
+            if ev_ebitda < 8: value_score += 5
+            elif ev_ebitda < 12: value_score += 4
+            elif ev_ebitda < 15: value_score += 3
+            elif ev_ebitda < 20: value_score += 1
+        if fcf_yield and fcf_yield > 0:
+            if fcf_yield > 10: value_score += 5
+            elif fcf_yield > 5: value_score += 4
+            elif fcf_yield > 3: value_score += 2
+            elif fcf_yield > 1: value_score += 1
+        value_score = min(value_score, 25)
         
-        score_quality = 0
-        if roe > 30: score_quality += 25
-        elif roe > 20: score_quality += 18
-        elif roe > 15: score_quality += 10
+        # GROWTH (0-25)
+        growth_score = 0
+        if revenue_growth > 50: growth_score += 9
+        elif revenue_growth > 30: growth_score += 7
+        elif revenue_growth > 20: growth_score += 5
+        elif revenue_growth > 10: growth_score += 3
+        elif revenue_growth > 5: growth_score += 1
+        if earnings_growth > 50: growth_score += 8
+        elif earnings_growth > 30: growth_score += 6
+        elif earnings_growth > 20: growth_score += 4
+        elif earnings_growth > 10: growth_score += 2
+        elif earnings_growth > 5: growth_score += 1
+        if gross_margins > 40: growth_score += 3
+        if operating_margins > 20: growth_score += 3
+        if net_margins > 15: growth_score += 2
+        growth_score = min(growth_score, 25)
         
-        score_momentum = 0
-        if caida > 20: score_momentum += 25
-        elif caida > 15: score_momentum += 20
-        elif caida > 10: score_momentum += 10
-        if recommendation == "strong_buy": score_momentum += 5
+        # QUALITY (0-25)
+        quality_score = 0
+        if roe > 50: quality_score += 7
+        elif roe > 30: quality_score += 5
+        elif roe > 20: quality_score += 4
+        elif roe > 15: quality_score += 2
+        elif roe > 10: quality_score += 1
+        if roic > 30: quality_score += 6
+        elif roic > 20: quality_score += 5
+        elif roic > 15: quality_score += 3
+        elif roic > 10: quality_score += 1
+        if debt_to_equity > 0:
+            if debt_to_equity < 0.3: quality_score += 6
+            elif debt_to_equity < 0.6: quality_score += 5
+            elif debt_to_equity < 1: quality_score += 4
+            elif debt_to_equity < 1.5: quality_score += 2
+            elif debt_to_equity < 2: quality_score += 1
+        else:
+            quality_score += 3
+        if net_margins > 20: quality_score += 6
+        elif net_margins > 15: quality_score += 4
+        elif net_margins > 10: quality_score += 2
+        elif net_margins > 5: quality_score += 1
+        quality_score = min(quality_score, 25)
         
-        score_total = min(100, score_value + score_growth + score_quality + score_momentum)
+        # MOMENTUM (0-25)
+        momentum_score = 0
+        if caida > 30: momentum_score += 10
+        elif caida > 20: momentum_score += 8
+        elif caida > 15: momentum_score += 6
+        elif caida > 10: momentum_score += 4
+        elif caida > 5: momentum_score += 2
+        if retorno_anual < 0:
+            if roe > 20 and revenue_growth > 15:
+                momentum_score += 8
+            elif roe > 15 and revenue_growth > 10:
+                momentum_score += 5
+            else:
+                momentum_score += 3
+        else:
+            momentum_score += 2
+        if recommendation == "strong_buy":
+            momentum_score += 7
+        elif recommendation == "buy":
+            momentum_score += 4
+        elif recommendation == "hold":
+            momentum_score += 1
+        momentum_score = min(momentum_score, 25)
         
+        score_total = value_score + growth_score + quality_score + momentum_score
+        
+        # Guardar datos
         datos_acciones.append({
             "ticker": ticker,
             "nombre": nombre,
             "precio": round(precio, 2),
             "max_52s": round(max_52s, 2),
             "caida": round(caida, 2),
+            "retorno_anual": round(retorno_anual, 2),
             "sector": sector,
-            "roe": round(roe, 2),
+            "industria": industry,
+            "market_cap_b": market_cap_b,
+            "forward_pe": round(forward_pe, 2) if forward_pe else 0,
+            "peg": round(peg, 2) if peg else 0,
+            "ev_ebitda": round(ev_ebitda, 2) if ev_ebitda else 0,
+            "fcf_yield": round(fcf_yield, 2),
             "revenue_growth": round(revenue_growth, 2),
             "earnings_growth": round(earnings_growth, 2),
-            "forward_pe": round(forward_pe, 2) if forward_pe else 0,
-            "rating": recommendation.upper() if recommendation else "N/A",
+            "gross_margins": round(gross_margins, 2),
+            "operating_margins": round(operating_margins, 2),
+            "net_margins": round(net_margins, 2),
+            "roe": round(roe, 2),
+            "roic": round(roic, 2),
+            "debt_to_equity": round(debt_to_equity, 2),
+            "current_ratio": round(current_ratio, 2),
+            "recommendation": recommendation,
             "target_mean": round(target_mean, 2) if target_mean else 0,
-            "score": score_total,
+            "target_high": round(target_high, 2) if target_high else 0,
+            "target_low": round(target_low, 2) if target_low else 0,
+            "number_analysts": number_analysts,
+            "dividend_yield": round(dividend_yield, 2),
+            # Scores
+            "score_value": value_score,
+            "score_growth": growth_score,
+            "score_quality": quality_score,
+            "score_momentum": momentum_score,
+            "score_total": score_total,
         })
         print(f"  ✓ {ticker}: ${precio:.2f} | Caída: {caida:.1f}% | Score: {score_total}")
         
@@ -116,76 +259,113 @@ for ticker, nombre in acciones.items():
 
 print(f"\n✅ {len(datos_acciones)} acciones descargadas correctamente")
 
-# Ordenar por score (mejores primero)
-datos_acciones.sort(key=lambda x: x['score'], reverse=True)
+# Ordenar por score total (mejores primero)
+datos_acciones.sort(key=lambda x: x['score_total'], reverse=True)
 
 # ==========================================
-# 3. GENERAR HTML DEL DASHBOARD
+# 5. GENERAR HTML COMPLETO
 # ==========================================
-print("🧠 Generando dashboard...")
+print("🧠 Generando dashboard completo...")
 
+# --- 5.1 Generar tabla HTML ---
 def generar_tabla_html(datos):
-    """Genera el HTML de la tabla con los datos"""
     if not datos:
         return '<tr><td colspan="10" style="text-align:center;color:#8b949e;">No hay datos disponibles</td></tr>'
     
     filas = ""
     for d in datos:
-        color_score = "#00d4aa" if d['score'] > 70 else "#58a6ff" if d['score'] > 50 else "#f0883e"
+        color_score = "#00d4aa" if d['score_total'] > 70 else "#58a6ff" if d['score_total'] > 50 else "#f0883e" if d['score_total'] > 30 else "#ff4757"
         color_caida = "#00d4aa" if d['caida'] > 15 else "#f0883e" if d['caida'] > 5 else "#ff4757"
         
         # Badge de rating
-        rating_badge = d['rating']
+        rating_badge = d['recommendation'].upper() if d['recommendation'] else "N/A"
         if rating_badge == "STRONG BUY":
-            rating_badge = '<span style="background:#00d4aa20;color:#00d4aa;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;">Strong Buy</span>'
+            rating_badge = '<span class="badge-bull">Strong Buy</span>'
         elif rating_badge == "BUY":
-            rating_badge = '<span style="background:#58a6ff20;color:#58a6ff;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;">Buy</span>'
+            rating_badge = '<span class="badge-buy">Buy</span>'
         elif rating_badge == "HOLD":
-            rating_badge = '<span style="background:#f0883e20;color:#f0883e;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;">Hold</span>'
+            rating_badge = '<span class="badge-hold">Hold</span>'
         else:
-            rating_badge = '<span style="background:#8b949e20;color:#8b949e;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;">N/A</span>'
+            rating_badge = '<span class="badge-na">N/A</span>'
         
         filas += f"""
-        <tr>
+        <tr onclick="toggleDetail('{d['ticker']}')" style="cursor:pointer;" class="data-row">
             <td><strong style="color:#58a6ff;">{d['ticker']}</strong></td>
             <td>{d['nombre']}</td>
-            <td>${d['precio']:.2f}</td>
-            <td>{d['sector']}</td>
-            <td style="color:{color_caida};">{d['caida']}%</td>
-            <td>{d['forward_pe']}</td>
-            <td style="color:{'#00d4aa' if d['roe'] > 20 else '#f0883e'};">{d['roe']}%</td>
-            <td style="color:{'#00d4aa' if d['revenue_growth'] > 15 else '#f0883e'};">{d['revenue_growth']}%</td>
-            <td style="font-weight:bold;color:{color_score};">{d['score']}</td>
+            <td class="num">${d['precio']:.2f}</td>
+            <td data-sector="{d['sector']}">{d['sector']}</td>
+            <td class="num" style="color:{color_caida};">{d['caida']}%</td>
+            <td class="num">{d['forward_pe']}</td>
+            <td class="num" style="color:{'#00d4aa' if d['roe'] > 20 else '#f0883e'};">{d['roe']}%</td>
+            <td class="num" style="color:{'#00d4aa' if d['revenue_growth'] > 15 else '#f0883e'};">{d['revenue_growth']}%</td>
+            <td class="num" style="font-weight:bold;color:{color_score};">{d['score_total']}</td>
             <td>{rating_badge}</td>
+        </tr>
+        <tr id="detail-{d['ticker']}" style="display:none;background:#0d1117;">
+            <td colspan="10" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">{d['score_value']}/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:{d['score_value']/25*100}%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">{d['score_growth']}/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:{d['score_growth']/25*100}%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">{d['score_quality']}/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:{d['score_quality']/25*100}%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">{d['score_momentum']}/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:{d['score_momentum']/25*100}%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: {d['roic']}% · Margen Neto: {d['net_margins']}%<br>
+                        Deuda/Equity: {d['debt_to_equity']} · FCF Yield: {d['fcf_yield']}%<br>
+                        PEG: {d['peg']} · EV/EBITDA: {d['ev_ebitda']}
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        {d['recommendation'].upper()} · Precio Objetivo: ${d['target_mean']}<br>
+                        {d['number_analysts']} analistas · Máx: ${d['target_high']} · Mín: ${d['target_low']}<br>
+                        Dividendo: {d['dividend_yield']}% · Market Cap: ${d['market_cap_b']}B
+                    </div>
+                </div>
+            </td>
         </tr>
         """
     return filas
 
+# --- 5.2 Generar burbujas SVG ---
 def generar_burbujas_svg(datos):
-    """Genera un mapa de burbujas SVG simple"""
     if not datos:
         return '<text x="450" y="250" fill="#8b949e" font-size="16" text-anchor="middle">No hay datos para el gráfico</text>'
     
-    colores_sector = {
-        "Technology": "#58a6ff",
-        "Communication Services": "#f0883e",
-        "Consumer Cyclical": "#00d4aa",
-        "Financial Services": "#ff4757",
-        "Healthcare": "#d2a8ff",
-        "Consumer Defensive": "#ffd93d",
-        "Energy": "#ff6b6b",
-        "N/A": "#8b949e",
-    }
-    
+    burbujas = ""
     max_x = 25
     max_y = 25
-    burbujas = ""
     
-    for d in datos[:12]:  # Top 12 para el gráfico
-        x = (d['score'] / 100) * 700 + 100
-        y = 430 - (d['roe'] / 100) * 380 if d['roe'] > 0 else 250
-        r = max(15, min(35, 20 + d['caida'] / 4))
-        color = colores_sector.get(d['sector'], "#8b949e")
+    for d in datos[:15]:
+        x = d['score_value'] / max_x * 700 + 100
+        y = 430 - (d['score_quality'] / max_y) * 380 if d['score_quality'] > 0 else 250
+        r = max(12, min(35, 15 + d['market_cap_b'] / 100))
+        color = sector_colores.get(d['sector'], "#8b949e")
         
         burbujas += f'''
         <circle cx="{x}" cy="{y}" r="{r}" fill="{color}" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
@@ -194,11 +374,38 @@ def generar_burbujas_svg(datos):
     
     return burbujas
 
-# Generar el HTML completo
+# --- 5.3 Generar Top 3 ---
+def generar_top3(datos):
+    if len(datos) < 3:
+        return '<p style="color:#8b949e;">No hay suficientes datos para mostrar el Top 3</p>'
+    
+    top_html = ""
+    colores_top = ["#00d4aa", "#58a6ff", "#f0883e"]
+    for i, d in enumerate(datos[:3]):
+        color_score = "#00d4aa" if d['score_total'] > 70 else "#58a6ff"
+        color_caida = "#00d4aa" if d['caida'] > 15 else "#f0883e"
+        top_html += f"""
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;border-top:3px solid {colores_top[i]};">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:20px;font-weight:700;color:#f0f6fc;">#{i+1} {d['ticker']}</span>
+                <span style="font-size:24px;font-weight:700;color:{color_score};">{d['score_total']}</span>
+            </div>
+            <div style="color:#8b949e;font-size:13px;">{d['nombre']} · {d['sector']}</div>
+            <div style="margin:8px 0;font-size:14px;">
+                <span style="color:{color_caida};">⬇️ {d['caida']}%</span>
+                · ROE: {d['roe']}% · Crecimiento: {d['revenue_growth']}%
+            </div>
+            <div style="font-size:13px;color:#c9d1d9;">Precio: ${d['precio']} · Objetivo: ${d['target_mean']} · {d['recommendation'].upper()}</div>
+        </div>
+        """
+    return top_html
+
+# --- 5.4 Generar HTML completo ---
 tabla_html = generar_tabla_html(datos_acciones)
 burbujas_svg = generar_burbujas_svg(datos_acciones)
+top3_html = generar_top3(datos_acciones)
 
-html_dashboard = f"""<!DOCTYPE html>
+html_completo = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -209,8 +416,9 @@ html_dashboard = f"""<!DOCTYPE html>
 body{{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.6;margin:0;padding:30px;}}
 .wrap{{max-width:1200px;margin:0 auto;}}
 header{{border-bottom:2px solid #30363d;padding-bottom:20px;margin-bottom:30px;}}
-.tag{{display:inline-block;background:#1f6feb;color:#fff;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:600;text-transform:uppercase;}}
-h1{{color:#f0f6fc;font-size:28px;margin:12px 0 4px;font-weight:700;}}
+.tag{{display:inline-block;background:#1f6feb;color:#fff;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}}
+h1{{color:#f0f6fc;font-size:30px;margin:12px 0 4px;font-weight:700;}}
+h2{{color:#f0f6fc;font-size:22px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #30363d;}}
 .meta{{color:#8b949e;font-size:14px;margin-top:6px;}}
 .banner-perfil{{background:#1f6feb15;border:1px solid #1f6feb55;padding:10px 14px;border-radius:4px;font-size:13px;margin-bottom:20px;}}
 .kpi-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin:20px 0;}}
@@ -219,125 +427,312 @@ h1{{color:#f0f6fc;font-size:28px;margin:12px 0 4px;font-weight:700;}}
 .kpi .num.green{{color:#00d4aa;}}
 .kpi .num.blue{{color:#58a6ff;}}
 .kpi .num.orange{{color:#f0883e;}}
+.kpi .num.purple{{color:#d2a8ff;}}
 .kpi .label{{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}}
-h2{{color:#f0f6fc;font-size:22px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #30363d;}}
-table{{width:100%;border-collapse:collapse;background:#161b22;border:1px solid #30363d;border-radius:8px;overflow:hidden;font-size:14px;}}
-th,td{{padding:12px;text-align:left;border-bottom:1px solid #21262d;}}
-th{{background:#21262d;color:#f0f6fc;font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:600;}}
-td.num{{text-align:right;font-family:"SF Mono",Menlo,monospace;}}
+.filter-bar{{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0;padding:12px 16px;background:#161b22;border:1px solid #30363d;border-radius:6px;}}
+.filter-bar select,.filter-bar input{{background:#0d1117;color:#c9d1d9;border:1px solid #30363d;border-radius:4px;padding:6px 10px;font-size:13px;}}
+.filter-bar button{{background:#1f6feb;color:#fff;border:none;border-radius:4px;padding:6px 16px;font-size:13px;cursor:pointer;}}
+.filter-bar button:hover{{background:#388bfd;}}
+table{{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:13px;background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden;}}
+th,td{{padding:10px 12px;text-align:left;border-bottom:1px solid #21262d;}}
+th{{background:#21262d;color:#f0f6fc;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;user-select:none;position:sticky;top:0;z-index:10;}}
+th:hover{{background:#30363d;}}
+td.num{{text-align:right;font-variant-numeric:tabular-nums;font-family:"SF Mono",Menlo,monospace;}}
+.badge-bull{{background:#00d4aa20;color:#00d4aa;border:1px solid #00d4aa55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}}
+.badge-buy{{background:#58a6ff20;color:#58a6ff;border:1px solid #58a6ff55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}}
+.badge-hold{{background:#f0883e20;color:#f0883e;border:1px solid #f0883e55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}}
+.badge-na{{background:#8b949e20;color:#8b949e;border:1px solid #8b949e55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}}
+.risk-grid{{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}}
+.risk-card{{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px 16px;}}
+.risk-card h4{{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;}}
+.risk-card.visible h4{{color:#f0883e;}}
+.risk-card.hidden h4{{color:#ff4757;}}
+.risk-card.scenario h4{{color:#58a6ff;}}
+.risk-card.signal h4{{color:#00d4aa;}}
+.risk-card p{{margin:0;font-size:14px;line-height:1.55;}}
+.callout-danger{{background:#161b22;border-left:4px solid #ff4757;padding:12px 16px;margin:12px 0;border-radius:0 4px 4px 0;}}
+.callout-danger strong{{color:#ff4757;}}
 footer{{margin-top:40px;padding-top:20px;border-top:1px solid #30363d;color:#8b949e;font-size:12px;}}
 footer p{{font-size:12px;margin:6px 0;}}
-@media(max-width:720px){{th,td{{font-size:11px;padding:8px;}}}}
+ul.check{{list-style:none;padding:0;margin:8px 0;}}
+ul.check li{{padding:6px 0;border-bottom:1px solid #21262d;font-size:14px;}}
+ul.check li:last-child{{border-bottom:none;}}
+@media(max-width:720px){{.risk-grid{{grid-template-columns:1fr;}}h1{{font-size:24px;}}th,td{{font-size:11px;padding:6px 8px;}}}}
 </style>
 </head>
 <body>
 <div class="wrap">
-    <header>
-        <span class="tag">📊 DASHBOARD</span>
-        <h1>Dashboard de Oportunidades de Inversión</h1>
-        <p style="color:#8b949e;margin:4px 0 0;">Screening de valor durante correcciones de mercado</p>
-        <div class="meta">{fecha_legible} — {hora_madrid}</div>
-    </header>
-    
-    <div class="banner-perfil">
-        <strong>Perfil estándar.</strong> {len(datos_acciones)} acciones analizadas · 
-        S&amp;P 500 + Nasdaq · Criterios: Value · Growth · Quality · Momentum
-    </div>
-    
-    <div class="kpi-grid">
-        <div class="kpi"><div class="num">{len(datos_acciones)}</div><div class="label">📊 Acciones Analizadas</div></div>
-        <div class="kpi"><div class="num green">{len([d for d in datos_acciones if d['score'] > 70])}</div><div class="label">⭐ Oportunidades (>70 pts)</div></div>
-        <div class="kpi"><div class="num blue">{round(sum(d['score'] for d in datos_acciones)/len(datos_acciones), 1) if datos_acciones else 0}</div><div class="label">📈 Score Promedio</div></div>
-        <div class="kpi"><div class="num orange">{max(set([d['sector'] for d in datos_acciones]), key=lambda s: sum(1 for d in datos_acciones if d['sector'] == s)) if datos_acciones else "N/A"}</div><div class="label">🏆 Sector Líder</div></div>
-    </div>
-    
-    <h2>🎯 Mapa de Oportunidades</h2>
-    <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:16px;text-align:center;">
-        <svg viewBox="0 0 900 500" style="max-width:100%;height:auto;">
-            <rect x="0" y="0" width="900" height="500" fill="#0d1117" rx="4"/>
-            <!-- Ejes -->
-            <line x1="100" y1="430" x2="830" y2="430" stroke="#30363d" stroke-width="1.5"/>
-            <line x1="100" y1="430" x2="100" y2="50" stroke="#30363d" stroke-width="1.5"/>
-            <!-- Etiquetas -->
-            <text x="460" y="470" fill="#8b949e" font-size="12" text-anchor="middle">⬅️ Menor Score ··· SCORE TOTAL ··· Mayor Score ➡️</text>
-            <text x="40" y="240" fill="#8b949e" font-size="12" text-anchor="middle" transform="rotate(-90,40,240)">⬅️ Menor ROE ··· RENTABILIDAD (ROE) ··· Mayor ROE ➡️</text>
-            <!-- Líneas de referencia -->
-            <line x1="100" y1="330" x2="830" y2="330" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
-            <line x1="465" y1="430" x2="465" y2="50" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
-            <!-- Burbujas -->
-            {burbujas_svg}
-            <!-- Leyenda -->
-            <rect x="730" y="55" width="160" height="120" fill="#161b22" rx="4" stroke="#30363d" stroke-width="1"/>
-            <text x="740" y="75" fill="#f0f6fc" font-size="11" font-weight="bold">SECTORES</text>
-            <circle cx="745" cy="95" r="6" fill="#58a6ff"/><text x="758" y="99" fill="#c9d1d9" font-size="10">Technology</text>
-            <circle cx="745" cy="115" r="6" fill="#f0883e"/><text x="758" y="119" fill="#c9d1d9" font-size="10">Communication</text>
-            <circle cx="745" cy="135" r="6" fill="#00d4aa"/><text x="758" y="139" fill="#c9d1d9" font-size="10">Consumer</text>
-            <circle cx="745" cy="155" r="6" fill="#ff4757"/><text x="758" y="159" fill="#c9d1d9" font-size="10">Financial</text>
-        </svg>
-        <p style="color:#8b949e;font-size:12px;margin:8px 0 0;">Tamaño de burbuja = Caída desde máximo · Color = Sector</p>
-    </div>
-    
-    <h2>📋 Tabla de Oportunidades</h2>
-    <p style="color:#8b949e;font-size:13px;margin:-8px 0 12px;">Ordenadas por Score (mejores oportunidades primero)</p>
-    <div style="overflow-x:auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Ticker</th>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Sector</th>
-                    <th>Caída %</th>
-                    <th>P/E</th>
-                    <th>ROE %</th>
-                    <th>Growth %</th>
-                    <th>Score</th>
-                    <th>Rating</th>
-                </tr>
-            </thead>
-            <tbody>
-                {tabla_html}
-            </tbody>
-        </table>
-    </div>
-    
-    <h2>⚠️ Análisis de Riesgos</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
-        <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px 16px;">
-            <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;color:#f0883e;">🔴 Riesgos Visibles</h4>
-            <p style="font-size:14px;">Corrección técnica en el sector tecnológico · Incertidumbre regulatoria · Desaceleración del crecimiento</p>
-        </div>
-        <div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px 16px;">
-            <h4 style="margin:0 0 8px;font-size:12px;text-transform:uppercase;color:#ff4757;">⚫ Riesgos No Descontados</h4>
-            <p style="font-size:14px;">Posible recesión global · Conflictos geopolíticos · Cambio en política monetaria</p>
-        </div>
-    </div>
-    
-    <h2>📖 Lectura Crítica</h2>
-    <div style="background:#161b22;border-left:4px solid #ff4757;padding:12px 16px;margin:12px 0;border-radius:0 4px 4px 0;">
-        <strong>⚠️ ¿Estamos comprando una corrección o el inicio de un mercado bajista?</strong>
-    </div>
-    <p style="font-size:15px;">La narrativa dominante sugiere que las caídas en el sector tecnológico son oportunidades de compra. Sin embargo, debemos cuestionar si el mercado está descontando correctamente el riesgo de una desaceleración económica más profunda.</p>
-    
-    <footer>
-        <p><strong>Aviso.</strong> Este dashboard es información general de mercado, no asesoramiento financiero ni recomendación de inversión personalizada.</p>
-        <p>Datos: Yahoo Finance · Generado automáticamente · {fecha_legible} {hora_madrid}</p>
-    </footer>
+
+<!-- ===== HEADER ===== -->
+<header>
+    <span class="tag">📊 DASHBOARD</span>
+    <h1>Dashboard de Oportunidades de Inversión</h1>
+    <p style="color:#8b949e;margin:4px 0 0;">Screening de valor durante correcciones de mercado</p>
+    <div class="meta">{fecha_legible} — {hora_madrid}</div>
+</header>
+
+<div class="banner-perfil">
+    <strong>Perfil estándar.</strong> {len(datos_acciones)} acciones analizadas · 
+    S&amp;P 500 + Nasdaq · Criterios: Value · Growth · Quality · Momentum
 </div>
+
+<!-- ===== KPI GRID ===== -->
+<div class="kpi-grid">
+    <div class="kpi"><div class="num">{len(datos_acciones)}</div><div class="label">📊 Acciones Analizadas</div></div>
+    <div class="kpi"><div class="num green">{len([d for d in datos_acciones if d['score_total'] > 70])}</div><div class="label">⭐ Oportunidades (>70 pts)</div></div>
+    <div class="kpi"><div class="num blue">{round(sum(d['score_total'] for d in datos_acciones)/len(datos_acciones), 1) if datos_acciones else 0}</div><div class="label">📈 Score Promedio</div></div>
+    <div class="kpi"><div class="num orange">{max(set([d['sector'] for d in datos_acciones]), key=lambda s: sum(1 for d in datos_acciones if d['sector'] == s)) if datos_acciones else "N/A"}</div><div class="label">🏆 Sector Líder</div></div>
+</div>
+
+<!-- ===== MAPA DE BURBUJAS ===== -->
+<h2>🎯 Mapa de Oportunidades</h2>
+<div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:16px;text-align:center;">
+    <svg viewBox="0 0 900 500" style="max-width:100%;height:auto;">
+        <rect x="0" y="0" width="900" height="500" fill="#0d1117" rx="4"/>
+        <!-- Ejes -->
+        <line x1="100" y1="430" x2="830" y2="430" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="100" y1="430" x2="100" y2="50" stroke="#30363d" stroke-width="1.5"/>
+        <!-- Etiquetas -->
+        <text x="460" y="470" fill="#8b949e" font-size="12" text-anchor="middle">⬅️ Barato ··· VALUE ··· Caro ➡️</text>
+        <text x="40" y="240" fill="#8b949e" font-size="12" text-anchor="middle" transform="rotate(-90,40,240)">⬅️ Baja Calidad ··· QUALITY ··· Alta Calidad ➡️</text>
+        <!-- Líneas de referencia -->
+        <line x1="100" y1="330" x2="830" y2="330" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="465" y1="430" x2="465" y2="50" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
+        <!-- Burbujas -->
+        {burbujas_svg}
+        <!-- Leyenda -->
+        <rect x="730" y="55" width="160" height="120" fill="#161b22" rx="4" stroke="#30363d" stroke-width="1"/>
+        <text x="740" y="75" fill="#f0f6fc" font-size="11" font-weight="bold">SECTORES</text>
+        {''.join([f'<circle cx="745" cy="{{95+i*20}}" r="6" fill="{{color}}"/><text x="758" y="{{99+i*20}}" fill="#c9d1d9" font-size="10">{{sector}}</text>' for i,(sector,color) in enumerate(list(sector_colores.items())[:5])])}
+    </svg>
+    <p style="color:#8b949e;font-size:12px;margin:8px 0 0;">Tamaño de burbuja = Capitalización de mercado · Color = Sector</p>
+</div>
+
+<!-- ===== FILTROS ===== -->
+<h2>🔍 Filtros Interactivos</h2>
+<div class="filter-bar">
+    <select id="sectorFilter" onchange="aplicarFiltros()">
+        <option value="all">Todos los sectores</option>
+        {''.join([f'<option value="{s}">{s}</option>' for s in sorted(set([d['sector'] for d in datos_acciones]))])}
+    </select>
+    <label style="font-size:13px;color:#8b949e;">Score mínimo:</label>
+    <input type="range" id="scoreFilter" min="0" max="100" value="0" oninput="aplicarFiltros()" style="width:150px;">
+    <span id="scoreLabel" style="font-size:13px;">0</span>
+    <select id="ratingFilter" onchange="aplicarFiltros()">
+        <option value="all">Todos los ratings</option>
+        <option value="strong_buy">Strong Buy</option>
+        <option value="buy">Buy</option>
+        <option value="hold">Hold</option>
+    </select>
+    <button onclick="resetearFiltros()">🔄 Resetear</button>
+    <span style="font-size:12px;color:#8b949e;margin-left:auto;" id="resultCount">Mostrando {len(datos_acciones)} acciones</span>
+</div>
+
+<!-- ===== TABLA ===== -->
+<h2>📋 Tabla de Oportunidades</h2>
+<p style="color:#8b949e;font-size:13px;margin:-8px 0 12px;">Haz clic en una fila para ver detalles · Haz clic en cabeceras para ordenar</p>
+<div style="overflow-x:auto;max-height:600px;overflow-y:auto;">
+    <table>
+        <thead>
+            <tr>
+                <th onclick="ordenarTabla(0)">Ticker</th>
+                <th onclick="ordenarTabla(1)">Nombre</th>
+                <th onclick="ordenarTabla(2)">Precio</th>
+                <th onclick="ordenarTabla(3)">Sector</th>
+                <th onclick="ordenarTabla(4)">Caída %</th>
+                <th onclick="ordenarTabla(5)">P/E</th>
+                <th onclick="ordenarTabla(6)">ROE %</th>
+                <th onclick="ordenarTabla(7)">Growth %</th>
+                <th onclick="ordenarTabla(8)">Score</th>
+                <th onclick="ordenarTabla(9)">Rating</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            {tabla_html}
+        </tbody>
+    </table>
+</div>
+
+<!-- ===== TOP 3 ===== -->
+<h2>🏆 Top 3 Oportunidades</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;margin:12px 0;">
+    {top3_html}
+</div>
+
+<!-- ===== ANÁLISIS DE RIESGOS ===== -->
+<h2>⚠️ Análisis de Riesgos</h2>
+<div class="risk-grid">
+    <div class="risk-card visible">
+        <h4>🔴 Riesgos Visibles</h4>
+        <p>Corrección técnica en el sector tecnológico · Incertidumbre regulatoria en IA · Desaceleración del crecimiento de ingresos en algunas empresas</p>
+    </div>
+    <div class="risk-card hidden">
+        <h4>⚫ Riesgos No Descontados</h4>
+        <p>Posible recesión global · Conflictos geopolíticos · Burbuja de IA · Cambio en política monetaria de la Fed</p>
+    </div>
+    <div class="risk-card scenario">
+        <h4>📊 Escenarios Alternativos</h4>
+        <p>Escenario bajista: corrección 20-30% adicional · Escenario base: consolidación y recuperación gradual · Escenario alcista: nuevo rally post-verano</p>
+    </div>
+    <div class="risk-card signal">
+        <h4>📡 Señales a Vigilar</h4>
+        <p>Resultados Q2 2026 · Evolución del dólar · Flujos de inversión institucional · Volatilidad VIX</p>
+    </div>
+</div>
+
+<!-- ===== LECTURA CRÍTICA ===== -->
+<h2>📖 Lectura Crítica</h2>
+<div class="callout-danger">
+    <strong>⚠️ ¿Estamos comprando una corrección o el inicio de un mercado bajista?</strong>
+</div>
+<p style="font-size:15px;">La narrativa dominante sugiere que las caídas en el sector tecnológico son oportunidades de compra. Sin embargo, debemos cuestionar si el mercado está descontando correctamente el riesgo de una desaceleración económica más profunda de lo esperado. Las valoraciones, aunque corregidas, siguen siendo elevadas en términos históricos.</p>
+<p style="font-size:15px;">El verdadero riesgo no es la corrección en sí, sino que los fundamentales de las empresas no cumplan con las expectativas de crecimiento implícitas en los precios actuales. La pregunta clave: ¿estamos pagando por crecimiento futuro que podría no materializarse?</p>
+
+<!-- ===== CHECKLIST ===== -->
+<h2>✅ Checklist de Rigor</h2>
+<ul class="check">
+    <li>✅ Datos obtenidos de Yahoo Finance (fuente primaria)</li>
+    <li>✅ Scores calculados con metodología consistente (4 pilares: Value, Growth, Quality, Momentum)</li>
+    <li>✅ Análisis separa hechos de interpretaciones</li>
+    <li>✅ Lenguaje probabilístico, no determinista</li>
+</ul>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <p><strong>Aviso.</strong> Este dashboard es información general de mercado, no asesoramiento financiero ni recomendación de inversión personalizada. Las decisiones de inversión son tuyas y conllevan riesgo de pérdida. Para asesoramiento personalizado acude a una entidad autorizada (CNMV en España o equivalente).</p>
+    <p>Datos: Yahoo Finance · Generado automáticamente · {fecha_legible} {hora_madrid}</p>
+</footer>
+
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// Variables para filtros y ordenación
+let sortColumn = -1;
+let sortAsc = true;
+
+// Función para expandir/colapsar detalles
+function toggleDetail(ticker) {{
+    const detailRow = document.getElementById('detail-' + ticker);
+    if (detailRow) {{
+        if (detailRow.style.display === 'none') {{
+            detailRow.style.display = 'table-row';
+        }} else {{
+            detailRow.style.display = 'none';
+        }}
+    }}
+}}
+
+// Función para ordenar tabla
+function ordenarTabla(col) {{
+    if (sortColumn === col) {{
+        sortAsc = !sortAsc;
+    }} else {{
+        sortColumn = col;
+        sortAsc = true;
+    }}
+    aplicarFiltros();
+}}
+
+// Función principal de filtrado y ordenación
+function aplicarFiltros() {{
+    const sector = document.getElementById('sectorFilter').value;
+    const minScore = parseInt(document.getElementById('scoreFilter').value);
+    const rating = document.getElementById('ratingFilter').value;
+    document.getElementById('scoreLabel').textContent = minScore;
+
+    const tbody = document.getElementById('tableBody');
+    const rows = tbody.querySelectorAll('tr');
+    let visibleRows = [];
+
+    rows.forEach(row => {{
+        // Saltamos filas de detalle
+        if (row.id && row.id.startsWith('detail-')) return;
+
+        const cells = row.querySelectorAll('td');
+        if (cells.length < 10) return;
+
+        const rowSector = cells[3].textContent.trim();
+        const rowScore = parseInt(cells[8].textContent.trim());
+        const rowRating = cells[9].textContent.trim().toLowerCase();
+
+        let visible = true;
+        if (sector !== 'all' && rowSector !== sector) visible = false;
+        if (rowScore < minScore) visible = false;
+        if (rating !== 'all' && !rowRating.includes(rating.replace('_', ' '))) visible = false;
+
+        // Ocultar detalle asociado
+        const ticker = cells[0].textContent.trim();
+        const detailRow = document.getElementById('detail-' + ticker);
+        if (detailRow) {{
+            detailRow.style.display = 'none';
+        }}
+
+        if (visible) {{
+            row.style.display = '';
+            visibleRows.push({{
+                row: row,
+                cells: cells,
+                ticker: ticker
+            }});
+        }} else {{
+            row.style.display = 'none';
+        }}
+    }});
+
+    document.getElementById('resultCount').textContent = 'Mostrando ' + visibleRows.length + ' acciones';
+
+    // Ordenación (sobre filas visibles)
+    if (visibleRows.length > 1 && sortColumn >= 0) {{
+        visibleRows.sort((a, b) => {{
+            let aVal = a.cells[sortColumn].textContent.trim();
+            let bVal = b.cells[sortColumn].textContent.trim();
+
+            // Intentar convertir a número
+            let aNum = parseFloat(aVal.replace(/,/g, '').replace(/[^0-9.-]/g, ''));
+            let bNum = parseFloat(bVal.replace(/,/g, '').replace(/[^0-9.-]/g, ''));
+
+            if (!isNaN(aNum) && !isNaN(bNum)) {{
+                return sortAsc ? aNum - bNum : bNum - aNum;
+            }}
+            return sortAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        }});
+
+        // Reordenar en el DOM
+        visibleRows.forEach(({{row}}) => tbody.appendChild(row));
+    }}
+}}
+
+function resetearFiltros() {{
+    document.getElementById('sectorFilter').value = 'all';
+    document.getElementById('scoreFilter').value = '0';
+    document.getElementById('ratingFilter').value = 'all';
+    document.getElementById('scoreLabel').textContent = '0';
+    aplicarFiltros();
+}}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {{
+    aplicarFiltros();
+}});
+</script>
+
 </body>
 </html>"""
 
 # ==========================================
-# 4. GUARDAR ARCHIVOS
+# 6. GUARDAR ARCHIVOS
 # ==========================================
 os.makedirs("dashboard-historico", exist_ok=True)
 
 with open("dashboard-latest.html", "w", encoding="utf-8") as f:
-    f.write(html_dashboard)
-print(f"✅ dashboard-latest.html guardado ({len(html_dashboard):,} caracteres)")
+    f.write(html_completo)
+print(f"✅ dashboard-latest.html guardado ({len(html_completo):,} caracteres)")
 
 with open(f"dashboard-historico/{fecha_hoy}.html", "w", encoding="utf-8") as f:
-    f.write(html_dashboard)
+    f.write(html_completo)
 print(f"✅ dashboard-historico/{fecha_hoy}.html guardado")
 
-print("\n🎉 DASHBOARD COMPLETADO")
+print("\n🎉 DASHBOARD COMPLETO GENERADO")
+print(f"📊 {len(datos_acciones)} acciones analizadas")
+print(f"📈 Score promedio: {round(sum(d['score_total'] for d in datos_acciones)/len(datos_acciones), 1) if datos_acciones else 0}")
