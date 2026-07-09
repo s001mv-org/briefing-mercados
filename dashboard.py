@@ -1,7 +1,7 @@
 import yfinance as yf
 import os
 import glob
-from datetime import datetime, timedelta
+from datetime import datetime
 from curl_cffi import requests
 
 # ==========================================
@@ -42,7 +42,7 @@ acciones = {
     "NFLX": "Netflix",
 }
 
-# Colores por sector
+# Colores por sector (para el gráfico de burbujas y leyenda)
 sector_colores = {
     "Technology": "#58a6ff",
     "Communication Services": "#f0883e",
@@ -54,7 +54,7 @@ sector_colores = {
 }
 
 # ==========================================
-# 3. DESCARGAR DATOS (con variación 24h)
+# 3. DESCARGAR DATOS
 # ==========================================
 session = requests.Session()
 session.headers.update({
@@ -69,7 +69,6 @@ print("📡 Descargando datos de acciones...")
 for ticker, nombre in acciones.items():
     try:
         t = yf.Ticker(ticker, session=session)
-        # Descargar 2 años para datos históricos y 5 días para variación
         hist = t.history(period="2y")
         hist_5d = t.history(period="5d")
         info = t.info
@@ -78,7 +77,7 @@ for ticker, nombre in acciones.items():
             print(f"  ⚠️ {ticker}: Historial insuficiente")
             continue
             
-        # Precio actual
+        # Precios y caída desde máximo
         precio = float(hist["Close"].iloc[-1])
         max_52s = float(hist["High"].max())
         caida = ((max_52s - precio) / max_52s) * 100 if max_52s > 0 else 0
@@ -99,7 +98,7 @@ for ticker, nombre in acciones.items():
         else:
             retorno_anual = 0
         
-        # Fundamentales (reales)
+        # Fundamentales
         sector = info.get("sector", "N/A")
         industry = info.get("industry", "N/A")
         market_cap = info.get("marketCap", 0)
@@ -122,15 +121,13 @@ for ticker, nombre in acciones.items():
         debt_to_equity = info.get("debtToEquity", 0)
         current_ratio = info.get("currentRatio", 0)
         
-        # Rating REAL de analistas (múltiples fuentes)
+        # Rating REAL de analistas
         recommendation = info.get("recommendationKey", "")
         average_rating = info.get("averageAnalystRating", "")
         
-        # Construir rating con la mejor fuente disponible
         if recommendation:
             rating_real = recommendation
         elif average_rating:
-            # Convertir rating numérico a texto
             try:
                 rating_num = float(average_rating)
                 if rating_num <= 1.5:
@@ -152,7 +149,6 @@ for ticker, nombre in acciones.items():
         target_high = info.get("targetHighPrice", 0)
         target_low = info.get("targetLowPrice", 0)
         number_analysts = info.get("numberOfAnalystOpinions", 0)
-        
         dividend_yield = info.get("dividendYield", 0) * 100 if info.get("dividendYield") else 0
         
         # ==========================================
@@ -332,11 +328,8 @@ def generar_grafico_barras(datos):
     return f'''
     <svg viewBox="0 0 650 230" style="width:100%;height:auto;">
         <rect x="0" y="0" width="650" height="230" fill="#0d1117" rx="4"/>
-        <!-- Línea del cero -->
         <line x1="30" y1="180" x2="620" y2="180" stroke="#30363d" stroke-width="1.5"/>
-        <!-- Barras -->
         {barras}
-        <!-- Etiquetas -->
         <text x="325" y="225" fill="#8b949e" font-size="11" text-anchor="middle">Variación 24h (%) · Top 10 acciones</text>
     </svg>
     '''
@@ -349,7 +342,7 @@ print("🧠 Generando dashboard completo...")
 # --- 6.1 Generar tabla HTML ---
 def generar_tabla_html(datos):
     if not datos:
-        return '<tr><td colspan="10" style="text-align:center;color:#8b949e;">No hay datos disponibles</td></tr>'
+        return '<tr><td colspan="11" style="text-align:center;color:#8b949e;">No hay datos disponibles</td></tr>'
     
     filas = ""
     for d in datos:
@@ -357,7 +350,7 @@ def generar_tabla_html(datos):
         color_caida = "#00d4aa" if d['caida'] > 15 else "#f0883e" if d['caida'] > 5 else "#ff4757"
         color_var = "#00d4aa" if d['var_24h'] >= 0 else "#ff4757"
         
-        # Badge de rating con colores mejorados
+        # Badge de rating mejorado
         rating_badge = d['recommendation'].upper() if d['recommendation'] and d['recommendation'] != "N/A" else "N/A"
         if rating_badge == "STRONG BUY" or rating_badge == "STRONG_BUY":
             rating_badge = '<span class="badge-bull">🔹 Strong Buy</span>'
@@ -435,7 +428,7 @@ def generar_tabla_html(datos):
         """
     return filas
 
-# --- 6.2 Generar burbujas SVG ---
+# --- 6.2 Generar burbujas SVG con LEYENDA CORREGIDA ---
 def generar_burbujas_svg(datos):
     if not datos:
         return '<text x="450" y="250" fill="#8b949e" font-size="16" text-anchor="middle">No hay datos para el gráfico</text>'
@@ -452,7 +445,35 @@ def generar_burbujas_svg(datos):
         <text x="{x}" y="{y+4}" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">{d['ticker']}</text>
         '''
     
-    return burbujas
+    # --- LEYENDA CORREGIDA (generada con Python) ---
+    sectores_mostrar = [
+        ("Technology", "#58a6ff"),
+        ("Communication Services", "#f0883e"),
+        ("Consumer Cyclical", "#00d4aa"),
+        ("Financial Services", "#ff4757"),
+        ("Healthcare", "#d2a8ff"),
+    ]
+    
+    leyenda_html = ""
+    for i, (nombre_sector, color) in enumerate(sectores_mostrar):
+        y_pos = 95 + i * 20
+        leyenda_html += f'<circle cx="745" cy="{y_pos}" r="6" fill="{color}"/><text x="758" y="{y_pos+4}" fill="#c9d1d9" font-size="10">{nombre_sector}</text>'
+    
+    return f'''
+    <svg viewBox="0 0 900 500" style="max-width:100%;height:auto;">
+        <rect x="0" y="0" width="900" height="500" fill="#0d1117" rx="4"/>
+        <line x1="100" y1="430" x2="830" y2="430" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="100" y1="430" x2="100" y2="50" stroke="#30363d" stroke-width="1.5"/>
+        <text x="460" y="470" fill="#8b949e" font-size="12" text-anchor="middle">⬅️ Barato ··· VALUE ··· Caro ➡️</text>
+        <text x="40" y="240" fill="#8b949e" font-size="12" text-anchor="middle" transform="rotate(-90,40,240)">⬅️ Baja Calidad ··· QUALITY ··· Alta Calidad ➡️</text>
+        <line x1="100" y1="330" x2="830" y2="330" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="465" y1="430" x2="465" y2="50" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
+        {burbujas}
+        <rect x="730" y="55" width="160" height="120" fill="#161b22" rx="4" stroke="#30363d" stroke-width="1"/>
+        <text x="740" y="75" fill="#f0f6fc" font-size="11" font-weight="bold">SECTORES</text>
+        {leyenda_html}
+    </svg>
+    '''
 
 # --- 6.3 Generar Top 3 ---
 def generar_top3(datos):
@@ -512,10 +533,11 @@ h2{{color:#f0f6fc;font-size:22px;margin:40px 0 12px;padding-bottom:8px;border-bo
 .kpi .num.purple{{color:#d2a8ff;}}
 .kpi .label{{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}}
 .filter-bar{{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0;padding:12px 20px;background:#161b22;border:1px solid #30363d;border-radius:8px;}}
-.filter-bar select,.filter-bar input{{background:#0d1117;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:8px 14px;font-size:13px;}}
-.filter-bar button{{background:#1f6feb;color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;}}
+.filter-bar select,.filter-bar input{{background:#0d1117;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:8px 14px;font-size:13px;min-width:120px;}}
+.filter-bar button{{background:#1f6feb;color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s ease;}}
 .filter-bar button:hover{{background:#388bfd;}}
-.filter-bar label{{font-size:13px;color:#8b949e;}}
+.filter-bar label{{font-size:13px;color:#8b949e;white-space:nowrap;}}
+.filter-bar input[type="range"]{{min-width:120px;}}
 table{{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:13px;background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden;}}
 th,td{{padding:10px 12px;text-align:left;border-bottom:1px solid #21262d;}}
 th{{background:#21262d;color:#f0f6fc;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;user-select:none;position:sticky;top:0;z-index:10;}}
@@ -577,19 +599,7 @@ ul.check li:last-child{{border-bottom:none;}}
 <!-- ===== MAPA DE BURBUJAS ===== -->
 <h2>🎯 Mapa de Oportunidades</h2>
 <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;text-align:center;">
-    <svg viewBox="0 0 900 500" style="max-width:100%;height:auto;">
-        <rect x="0" y="0" width="900" height="500" fill="#0d1117" rx="4"/>
-        <line x1="100" y1="430" x2="830" y2="430" stroke="#30363d" stroke-width="1.5"/>
-        <line x1="100" y1="430" x2="100" y2="50" stroke="#30363d" stroke-width="1.5"/>
-        <text x="460" y="470" fill="#8b949e" font-size="12" text-anchor="middle">⬅️ Barato ··· VALUE ··· Caro ➡️</text>
-        <text x="40" y="240" fill="#8b949e" font-size="12" text-anchor="middle" transform="rotate(-90,40,240)">⬅️ Baja Calidad ··· QUALITY ··· Alta Calidad ➡️</text>
-        <line x1="100" y1="330" x2="830" y2="330" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
-        <line x1="465" y1="430" x2="465" y2="50" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
-        {burbujas_svg}
-        <rect x="730" y="55" width="160" height="120" fill="#161b22" rx="4" stroke="#30363d" stroke-width="1"/>
-        <text x="740" y="75" fill="#f0f6fc" font-size="11" font-weight="bold">SECTORES</text>
-        {''.join([f'<circle cx="745" cy="{{95+i*20}}" r="6" fill="{{color}}"/><text x="758" y="{{99+i*20}}" fill="#c9d1d9" font-size="10">{{sector}}</text>' for i,(sector,color) in enumerate(list(sector_colores.items())[:5])])}
-    </svg>
+    {burbujas_svg}
     <p style="color:#8b949e;font-size:12px;margin:8px 0 0;">Tamaño de burbuja = Capitalización de mercado · Color = Sector</p>
 </div>
 
