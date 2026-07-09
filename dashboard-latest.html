@@ -22,19 +22,21 @@ h2{color:#f0f6fc;font-size:22px;margin:40px 0 12px;padding-bottom:8px;border-bot
 .kpi .num.orange{color:#f0883e;}
 .kpi .num.purple{color:#d2a8ff;}
 .kpi .label{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
-.filter-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0;padding:12px 16px;background:#161b22;border:1px solid #30363d;border-radius:6px;}
-.filter-bar select,.filter-bar input{background:#0d1117;color:#c9d1d9;border:1px solid #30363d;border-radius:4px;padding:6px 10px;font-size:13px;}
-.filter-bar button{background:#1f6feb;color:#fff;border:none;border-radius:4px;padding:6px 16px;font-size:13px;cursor:pointer;}
+.filter-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0;padding:12px 20px;background:#161b22;border:1px solid #30363d;border-radius:8px;}
+.filter-bar select,.filter-bar input{background:#0d1117;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:8px 14px;font-size:13px;}
+.filter-bar button{background:#1f6feb;color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;}
 .filter-bar button:hover{background:#388bfd;}
+.filter-bar label{font-size:13px;color:#8b949e;}
 table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:13px;background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden;}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #21262d;}
 th{background:#21262d;color:#f0f6fc;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;user-select:none;position:sticky;top:0;z-index:10;}
 th:hover{background:#30363d;}
 td.num{text-align:right;font-variant-numeric:tabular-nums;font-family:"SF Mono",Menlo,monospace;}
-.badge-bull{background:#00d4aa20;color:#00d4aa;border:1px solid #00d4aa55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
-.badge-buy{background:#58a6ff20;color:#58a6ff;border:1px solid #58a6ff55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
-.badge-hold{background:#f0883e20;color:#f0883e;border:1px solid #f0883e55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
-.badge-na{background:#8b949e20;color:#8b949e;border:1px solid #8b949e55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
+.badge-bull{background:#00d4aa25;color:#00d4aa;border:1px solid #00d4aa55;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.badge-buy{background:#58a6ff25;color:#58a6ff;border:1px solid #58a6ff55;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.badge-hold{background:#f0883e25;color:#f0883e;border:1px solid #f0883e55;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.badge-sell{background:#ff475725;color:#ff4757;border:1px solid #ff475755;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.badge-na{background:#8b949e25;color:#8b949e;border:1px solid #8b949e55;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
 .risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
 .risk-card{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px 16px;}
 .risk-card h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
@@ -61,7 +63,7 @@ ul.check li:last-child{border-bottom:none;}
     <span class="tag">📊 DASHBOARD</span>
     <h1>Dashboard de Oportunidades de Inversión</h1>
     <p style="color:#8b949e;margin:4px 0 0;">Screening de valor durante correcciones de mercado</p>
-    <div class="meta">09/07/2026 — 22:04 CEST</div>
+    <div class="meta">09/07/2026 — 22:23 CEST</div>
 </header>
 
 <div class="banner-perfil">
@@ -77,21 +79,73 @@ ul.check li:last-child{border-bottom:none;}
     <div class="kpi"><div class="num orange">Technology</div><div class="label">🏆 Sector Líder</div></div>
 </div>
 
+<!-- ===== GRÁFICO DE BARRAS 24h ===== -->
+<h2>📊 Variación 24h (Top 10 acciones)</h2>
+<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:10px;">
+    
+    <svg viewBox="0 0 650 230" style="width:100%;height:auto;">
+        <rect x="0" y="0" width="650" height="230" fill="#0d1117" rx="4"/>
+        <!-- Línea del cero -->
+        <line x1="30" y1="180" x2="620" y2="180" stroke="#30363d" stroke-width="1.5"/>
+        <!-- Barras -->
+        
+        <rect x="50" y="30" width="50" height="150" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="75.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">META</text>
+        <text x="75.0" y="24" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+4.7%</text>
+        
+        <rect x="110" y="180" width="50" height="21.063829787234045" fill="#ff4757" rx="3" opacity="0.9"/>
+        <text x="135.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">NVDA</text>
+        <text x="135.0" y="174" text-anchor="middle" fill="#ff4757" font-size="10" font-weight="bold">-0.7%</text>
+        
+        <rect x="170" y="95.42553191489363" width="50" height="84.57446808510637" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="195.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">ORCL</text>
+        <text x="195.0" y="89.42553191489363" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+2.6%</text>
+        
+        <rect x="230" y="180" width="50" height="5.1063829787234045" fill="#ff4757" rx="3" opacity="0.9"/>
+        <text x="255.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">NFLX</text>
+        <text x="255.0" y="174" text-anchor="middle" fill="#ff4757" font-size="10" font-weight="bold">-0.2%</text>
+        
+        <rect x="290" y="171.38297872340425" width="50" height="8.617021276595745" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="315.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">MSFT</text>
+        <text x="315.0" y="165.38297872340425" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+0.3%</text>
+        
+        <rect x="350" y="77.87234042553192" width="50" height="102.12765957446808" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="375.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">AVGO</text>
+        <text x="375.0" y="71.87234042553192" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+3.2%</text>
+        
+        <rect x="410" y="180" width="50" height="78.19148936170214" fill="#ff4757" rx="3" opacity="0.9"/>
+        <text x="435.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">CRM</text>
+        <text x="435.0" y="174" text-anchor="middle" fill="#ff4757" font-size="10" font-weight="bold">-2.5%</text>
+        
+        <rect x="470" y="173.93617021276594" width="50" height="6.063829787234042" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="495.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">V</text>
+        <text x="495.0" y="167.93617021276594" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+0.2%</text>
+        
+        <rect x="530" y="180" width="50" height="26.808510638297868" fill="#ff4757" rx="3" opacity="0.9"/>
+        <text x="555.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">GOOGL</text>
+        <text x="555.0" y="174" text-anchor="middle" fill="#ff4757" font-size="10" font-weight="bold">-0.8%</text>
+        
+        <rect x="590" y="175" width="50" height="5" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="615.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">LLY</text>
+        <text x="615.0" y="169" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+0.1%</text>
+        
+        <!-- Etiquetas -->
+        <text x="325" y="225" fill="#8b949e" font-size="11" text-anchor="middle">Variación 24h (%) · Top 10 acciones</text>
+    </svg>
+    
+</div>
+
 <!-- ===== MAPA DE BURBUJAS ===== -->
 <h2>🎯 Mapa de Oportunidades</h2>
-<div style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:16px;text-align:center;">
+<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;text-align:center;">
     <svg viewBox="0 0 900 500" style="max-width:100%;height:auto;">
         <rect x="0" y="0" width="900" height="500" fill="#0d1117" rx="4"/>
-        <!-- Ejes -->
         <line x1="100" y1="430" x2="830" y2="430" stroke="#30363d" stroke-width="1.5"/>
         <line x1="100" y1="430" x2="100" y2="50" stroke="#30363d" stroke-width="1.5"/>
-        <!-- Etiquetas -->
         <text x="460" y="470" fill="#8b949e" font-size="12" text-anchor="middle">⬅️ Barato ··· VALUE ··· Caro ➡️</text>
         <text x="40" y="240" fill="#8b949e" font-size="12" text-anchor="middle" transform="rotate(-90,40,240)">⬅️ Baja Calidad ··· QUALITY ··· Alta Calidad ➡️</text>
-        <!-- Líneas de referencia -->
         <line x1="100" y1="330" x2="830" y2="330" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
         <line x1="465" y1="430" x2="465" y2="50" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
-        <!-- Burbujas -->
         
         <circle cx="436.0" cy="217.2" r="31.029600000000002" fill="#f0883e" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
         <text x="436.0" y="221.2" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">META</text>
@@ -138,7 +192,6 @@ ul.check li:last-child{border-bottom:none;}
         <circle cx="296.0" cy="262.8" r="23.988999999999997" fill="#ff4757" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
         <text x="296.0" y="266.8" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">JPM</text>
         
-        <!-- Leyenda -->
         <rect x="730" y="55" width="160" height="120" fill="#161b22" rx="4" stroke="#30363d" stroke-width="1"/>
         <text x="740" y="75" fill="#f0f6fc" font-size="11" font-weight="bold">SECTORES</text>
         <circle cx="745" cy="{95+i*20}" r="6" fill="{color}"/><text x="758" y="{99+i*20}" fill="#c9d1d9" font-size="10">{sector}</text><circle cx="745" cy="{95+i*20}" r="6" fill="{color}"/><text x="758" y="{99+i*20}" fill="#c9d1d9" font-size="10">{sector}</text><circle cx="745" cy="{95+i*20}" r="6" fill="{color}"/><text x="758" y="{99+i*20}" fill="#c9d1d9" font-size="10">{sector}</text><circle cx="745" cy="{95+i*20}" r="6" fill="{color}"/><text x="758" y="{99+i*20}" fill="#c9d1d9" font-size="10">{sector}</text><circle cx="745" cy="{95+i*20}" r="6" fill="{color}"/><text x="758" y="{99+i*20}" fill="#c9d1d9" font-size="10">{sector}</text>
@@ -153,7 +206,7 @@ ul.check li:last-child{border-bottom:none;}
         <option value="all">Todos los sectores</option>
         <option value="Communication Services">Communication Services</option><option value="Consumer Cyclical">Consumer Cyclical</option><option value="Consumer Defensive">Consumer Defensive</option><option value="Financial Services">Financial Services</option><option value="Healthcare">Healthcare</option><option value="Technology">Technology</option>
     </select>
-    <label style="font-size:13px;color:#8b949e;">Score mínimo:</label>
+    <label>Score mínimo:</label>
     <input type="range" id="scoreFilter" min="0" max="100" value="0" oninput="aplicarFiltros()" style="width:150px;">
     <span id="scoreLabel" style="font-size:13px;">0</span>
     <select id="ratingFilter" onchange="aplicarFiltros()">
@@ -161,6 +214,7 @@ ul.check li:last-child{border-bottom:none;}
         <option value="strong_buy">Strong Buy</option>
         <option value="buy">Buy</option>
         <option value="hold">Hold</option>
+        <option value="sell">Sell</option>
     </select>
     <button onclick="resetearFiltros()">🔄 Resetear</button>
     <span style="font-size:12px;color:#8b949e;margin-left:auto;" id="resultCount">Mostrando 18 acciones</span>
@@ -178,11 +232,12 @@ ul.check li:last-child{border-bottom:none;}
                 <th onclick="ordenarTabla(2)">Precio</th>
                 <th onclick="ordenarTabla(3)">Sector</th>
                 <th onclick="ordenarTabla(4)">Caída %</th>
-                <th onclick="ordenarTabla(5)">P/E</th>
-                <th onclick="ordenarTabla(6)">ROE %</th>
-                <th onclick="ordenarTabla(7)">Growth %</th>
-                <th onclick="ordenarTabla(8)">Score</th>
-                <th onclick="ordenarTabla(9)">Rating</th>
+                <th onclick="ordenarTabla(5)">Var 24h</th>
+                <th onclick="ordenarTabla(6)">P/E</th>
+                <th onclick="ordenarTabla(7)">ROE %</th>
+                <th onclick="ordenarTabla(8)">Growth %</th>
+                <th onclick="ordenarTabla(9)">Score</th>
+                <th onclick="ordenarTabla(10)">Rating</th>
             </tr>
         </thead>
         <tbody id="tableBody">
@@ -193,14 +248,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$631.48</td>
             <td data-sector="Communication Services">Communication Services</td>
             <td class="num" style="color:#00d4aa;">20.43%</td>
+            <td class="num" style="color:#00d4aa;">+4.70%</td>
             <td class="num">17.14</td>
             <td class="num" style="color:#00d4aa;">32.93%</td>
             <td class="num" style="color:#00d4aa;">33.1%</td>
             <td class="num" style="font-weight:bold;color:#00d4aa;">72</td>
-            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
         </tr>
         <tr id="detail-META" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -254,14 +310,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$202.78</td>
             <td data-sector="Technology">Technology</td>
             <td class="num" style="color:#f0883e;">14.27%</td>
+            <td class="num" style="color:#ff4757;">-0.66%</td>
             <td class="num">15.89</td>
             <td class="num" style="color:#00d4aa;">114.29%</td>
             <td class="num" style="color:#00d4aa;">85.2%</td>
             <td class="num" style="font-weight:bold;color:#58a6ff;">66</td>
-            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
         </tr>
         <tr id="detail-NVDA" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -315,14 +372,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$144.22</td>
             <td data-sector="Technology">Technology</td>
             <td class="num" style="color:#00d4aa;">57.95%</td>
+            <td class="num" style="color:#00d4aa;">+2.65%</td>
             <td class="num">13.21</td>
             <td class="num" style="color:#00d4aa;">53.38%</td>
             <td class="num" style="color:#00d4aa;">20.6%</td>
             <td class="num" style="font-weight:bold;color:#58a6ff;">64</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-ORCL" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -376,14 +434,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$75.47</td>
             <td data-sector="Communication Services">Communication Services</td>
             <td class="num" style="color:#00d4aa;">43.73%</td>
+            <td class="num" style="color:#ff4757;">-0.16%</td>
             <td class="num">19.64</td>
             <td class="num" style="color:#00d4aa;">48.49%</td>
             <td class="num" style="color:#00d4aa;">16.2%</td>
             <td class="num" style="font-weight:bold;color:#58a6ff;">62</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-NFLX" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -437,14 +496,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$384.36</td>
             <td data-sector="Technology">Technology</td>
             <td class="num" style="color:#00d4aa;">30.25%</td>
+            <td class="num" style="color:#00d4aa;">+0.27%</td>
             <td class="num">19.86</td>
             <td class="num" style="color:#00d4aa;">34.01%</td>
             <td class="num" style="color:#00d4aa;">18.3%</td>
             <td class="num" style="font-weight:bold;color:#58a6ff;">60</td>
-            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
         </tr>
         <tr id="detail-MSFT" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -498,14 +558,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$401.11</td>
             <td data-sector="Technology">Technology</td>
             <td class="num" style="color:#00d4aa;">18.84%</td>
+            <td class="num" style="color:#00d4aa;">+3.20%</td>
             <td class="num">20.68</td>
             <td class="num" style="color:#00d4aa;">37.28%</td>
             <td class="num" style="color:#00d4aa;">47.9%</td>
             <td class="num" style="font-weight:bold;color:#58a6ff;">59</td>
-            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
         </tr>
         <tr id="detail-AVGO" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -559,14 +620,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$162.50</td>
             <td data-sector="Technology">Technology</td>
             <td class="num" style="color:#00d4aa;">55.4%</td>
+            <td class="num" style="color:#ff4757;">-2.45%</td>
             <td class="num">10.48</td>
             <td class="num" style="color:#f0883e;">16.91%</td>
             <td class="num" style="color:#f0883e;">13.3%</td>
             <td class="num" style="font-weight:bold;color:#58a6ff;">58</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-CRM" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -620,14 +682,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$348.20</td>
             <td data-sector="Financial Services">Financial Services</td>
             <td class="num" style="color:#f0883e;">6.54%</td>
+            <td class="num" style="color:#00d4aa;">+0.19%</td>
             <td class="num">23.42</td>
             <td class="num" style="color:#00d4aa;">60.35%</td>
             <td class="num" style="color:#00d4aa;">17.1%</td>
             <td class="num" style="font-weight:bold;color:#58a6ff;">53</td>
-            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
         </tr>
         <tr id="detail-V" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -681,14 +744,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$358.89</td>
             <td data-sector="Communication Services">Communication Services</td>
             <td class="num" style="color:#f0883e;">12.12%</td>
+            <td class="num" style="color:#ff4757;">-0.84%</td>
             <td class="num">24.65</td>
             <td class="num" style="color:#00d4aa;">38.88%</td>
             <td class="num" style="color:#00d4aa;">21.8%</td>
             <td class="num" style="font-weight:bold;color:#58a6ff;">51</td>
-            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
         </tr>
         <tr id="detail-GOOGL" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -742,14 +806,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$1216.95</td>
             <td data-sector="Healthcare">Healthcare</td>
             <td class="num" style="color:#ff4757;">2.6%</td>
+            <td class="num" style="color:#00d4aa;">+0.09%</td>
             <td class="num">27.16</td>
             <td class="num" style="color:#00d4aa;">107.46%</td>
             <td class="num" style="color:#00d4aa;">55.5%</td>
             <td class="num" style="font-weight:bold;color:#f0883e;">50</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-LLY" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -803,14 +868,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$316.22</td>
             <td data-sector="Technology">Technology</td>
             <td class="num" style="color:#ff4757;">0.37%</td>
+            <td class="num" style="color:#00d4aa;">+0.90%</td>
             <td class="num">32.91</td>
             <td class="num" style="color:#00d4aa;">141.47%</td>
             <td class="num" style="color:#00d4aa;">16.6%</td>
             <td class="num" style="font-weight:bold;color:#f0883e;">39</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-AAPL" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -864,14 +930,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$146.85</td>
             <td data-sector="Consumer Defensive">Consumer Defensive</td>
             <td class="num" style="color:#00d4aa;">15.54%</td>
+            <td class="num" style="color:#ff4757;">-1.04%</td>
             <td class="num">20.77</td>
             <td class="num" style="color:#00d4aa;">31.11%</td>
             <td class="num" style="color:#f0883e;">7.4%</td>
             <td class="num" style="font-weight:bold;color:#f0883e;">38</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-PG" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -925,14 +992,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$247.04</td>
             <td data-sector="Consumer Cyclical">Consumer Cyclical</td>
             <td class="num" style="color:#f0883e;">11.32%</td>
+            <td class="num" style="color:#00d4aa;">+1.40%</td>
             <td class="num">24.97</td>
             <td class="num" style="color:#00d4aa;">24.29%</td>
             <td class="num" style="color:#00d4aa;">16.6%</td>
             <td class="num" style="font-weight:bold;color:#f0883e;">37</td>
-            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
         </tr>
         <tr id="detail-AMZN" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -986,14 +1054,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$546.72</td>
             <td data-sector="Technology">Technology</td>
             <td class="num" style="color:#f0883e;">6.5%</td>
+            <td class="num" style="color:#00d4aa;">+5.66%</td>
             <td class="num">41.42</td>
             <td class="num" style="color:#f0883e;">8.06%</td>
             <td class="num" style="color:#00d4aa;">37.8%</td>
             <td class="num" style="font-weight:bold;color:#f0883e;">34</td>
-            <td><span class="badge-na">N/A</span></td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
         </tr>
         <tr id="detail-AMD" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -1047,14 +1116,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$335.47</td>
             <td data-sector="Financial Services">Financial Services</td>
             <td class="num" style="color:#ff4757;">1.88%</td>
+            <td class="num" style="color:#00d4aa;">+1.47%</td>
             <td class="num">14.02</td>
             <td class="num" style="color:#f0883e;">16.47%</td>
             <td class="num" style="color:#f0883e;">12.7%</td>
             <td class="num" style="font-weight:bold;color:#f0883e;">34</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-JPM" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -1108,14 +1178,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$912.97</td>
             <td data-sector="Consumer Defensive">Consumer Defensive</td>
             <td class="num" style="color:#00d4aa;">16.74%</td>
+            <td class="num" style="color:#ff4757;">-4.21%</td>
             <td class="num">40.36</td>
             <td class="num" style="color:#00d4aa;">29.15%</td>
             <td class="num" style="color:#00d4aa;">21.5%</td>
             <td class="num" style="font-weight:bold;color:#f0883e;">33</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-COST" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -1169,14 +1240,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$82.63</td>
             <td data-sector="Consumer Defensive">Consumer Defensive</td>
             <td class="num" style="color:#ff4757;">3.56%</td>
+            <td class="num" style="color:#ff4757;">-0.92%</td>
             <td class="num">23.73</td>
             <td class="num" style="color:#00d4aa;">43.37%</td>
             <td class="num" style="color:#f0883e;">12.1%</td>
             <td class="num" style="font-weight:bold;color:#f0883e;">32</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-KO" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -1230,14 +1302,15 @@ ul.check li:last-child{border-bottom:none;}
             <td class="num">$406.55</td>
             <td data-sector="Consumer Cyclical">Consumer Cyclical</td>
             <td class="num" style="color:#00d4aa;">18.5%</td>
+            <td class="num" style="color:#00d4aa;">+3.17%</td>
             <td class="num">158.75</td>
             <td class="num" style="color:#f0883e;">4.9%</td>
             <td class="num" style="color:#00d4aa;">15.8%</td>
             <td class="num" style="font-weight:bold;color:#ff4757;">16</td>
-            <td><span class="badge-buy">Buy</span></td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
         </tr>
         <tr id="detail-TSLA" style="display:none;background:#0d1117;">
-            <td colspan="10" style="padding:16px 20px;">
+            <td colspan="11" style="padding:16px 20px;">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
                     <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
                         <div style="font-size:11px;color:#8b949e;">VALUE</div>
@@ -1375,7 +1448,7 @@ ul.check li:last-child{border-bottom:none;}
 <!-- ===== FOOTER ===== -->
 <footer>
     <p><strong>Aviso.</strong> Este dashboard es información general de mercado, no asesoramiento financiero ni recomendación de inversión personalizada. Las decisiones de inversión son tuyas y conllevan riesgo de pérdida. Para asesoramiento personalizado acude a una entidad autorizada (CNMV en España o equivalente).</p>
-    <p>Datos: Yahoo Finance · Generado automáticamente · 09/07/2026 22:04 CEST</p>
+    <p>Datos: Yahoo Finance · Generado automáticamente · 09/07/2026 22:23 CEST</p>
 </footer>
 
 </div>
@@ -1425,11 +1498,11 @@ function aplicarFiltros() {
         if (row.id && row.id.startsWith('detail-')) return;
 
         const cells = row.querySelectorAll('td');
-        if (cells.length < 10) return;
+        if (cells.length < 11) return;
 
         const rowSector = cells[3].textContent.trim();
-        const rowScore = parseInt(cells[8].textContent.trim());
-        const rowRating = cells[9].textContent.trim().toLowerCase();
+        const rowScore = parseInt(cells[9].textContent.trim());
+        const rowRating = cells[10].textContent.trim().toLowerCase();
 
         let visible = true;
         if (sector !== 'all' && rowSector !== sector) visible = false;
