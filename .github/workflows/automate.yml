@@ -2,51 +2,78 @@ name: Generar Briefing + Dashboard
 
 on:
   schedule:
+    # Se ejecuta a las 05:00 UTC (07:00 CET / 08:00 CEST) de Lunes a Viernes
     - cron: '0 5 * * 1-5'
+  
+  # Permite ejecución manual desde la interfaz de GitHub
   workflow_dispatch:
 
+# Permisos necesarios para que el bot pueda escribir archivos
 permissions:
   contents: write
+
+# Variable de entorno para forzar Node.js 24
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   generar-contenido:
     runs-on: ubuntu-latest
     
     steps:
+      # Checkout con la última versión estable
       - name: Checkout del código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
 
+      # Python con la última versión estable
       - name: Configurar Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.4.0
         with:
-          python-version: '3.11'
+          python-version: '3.12'  # Actualizado a Python 3.12
+
+      # Cache de pip para acelerar las ejecuciones
+      - name: Cache de dependencias
+        uses: actions/cache@v4.2.0
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Instalar dependencias
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Ejecutar Morning Note
       - name: Ejecutar Morning Note
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main.py
 
+      # Ejecutar Dashboard
       - name: Ejecutar Dashboard
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python dashboard.py
 
+      # Publicar en GitHub Pages
       - name: Publicar en GitHub Pages
         run: |
           git config --global user.name "Bot Financiero"
           git config --global user.email "bot@briefing.com"
           
+          # Traer cambios remotos para evitar conflictos
           git pull origin main --rebase || true
           
+          # Añadir archivos del Morning Note
           git add index.html latest.html historico/
-          git add dashboard-latest.html dashboard-historico/
           
-          git commit -m "Briefing + Dashboard: $(date +'%Y-%m-%d %H:%M')" || echo "Sin cambios"
+          # Añadir archivos del Dashboard
+          git add dashboard-latest.html dashboard-historico/ || true
+          
+          # Commit y push
+          git commit -m "Briefing + Dashboard: $(date +'%Y-%m-%d %H:%M')" || echo "Sin cambios para commitear"
           git push origin main
