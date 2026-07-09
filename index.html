@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Morning Note Institucional</title>
+<title>Morning Note + Dashboard de Oportunidades</title>
 <style>
 body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,sans-serif;text-align:center;padding:50px 20px;}
 h1{color:#f0f6fc;font-size:28px;margin-bottom:8px;}
 .sub{color:#8b949e;font-size:14px;margin-bottom:32px;}
-.btn{background:#1f6feb;color:#fff;padding:16px 32px;text-decoration:none;border-radius:8px;display:inline-block;margin-bottom:40px;font-weight:600;font-size:16px;}
+.btn-group{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-bottom:40px;}
+.btn{background:#1f6feb;color:#fff;padding:16px 32px;text-decoration:none;border-radius:8px;font-weight:600;font-size:16px;min-width:200px;}
 .btn:hover{background:#388bfd;}
+.btn.dashboard{background:#238636;}
+.btn.dashboard:hover{background:#2ea043;}
 .caja{background:#161b22;border:1px solid #30363d;border-radius:12px;max-width:520px;margin:0 auto;padding:24px;text-align:left;}
 .caja h2{color:#f0f6fc;margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid #30363d;font-size:17px;}
 ul{list-style:none;padding:0;margin:0;}
@@ -18,12 +21,71 @@ li a:hover{color:#79c0ff;}
 </style>
 </head>
 <body>
-<h1>📊 Morning Note Institucional</h1>
-<p class="sub">Briefing diario de mercados — actualización automática L-V</p>
-<a href="latest.html" class="btn">📈 Leer briefing de hoy (09/07/2026)</a>
-<div class="caja">
-  <h2>📚 Hemeroteca (últimos 30 días)</h2>
-  <ul><li><a href="historico/2026-07-09.html">📊 2026-07-09</a></li><li><a href="historico/2026-07-08.html">📊 2026-07-08</a></li><li><a href="historico/2026-07-07.html">📊 2026-07-07</a></li><li><a href="historico/2026-07-06.html">📊 2026-07-06</a></li><li><a href="historico/2026-07-03.html">📊 2026-07-03</a></li><li><a href="historico/2026-07-02.html">📊 2026-07-02</a></li><li><a href="historico/2026-07-01.html">📊 2026-07-01</a></li><li><a href="historico/2026-06-30.html">📊 2026-06-30</a></li><li><a href="historico/2026-06-29.html">📊 2026-06-29</a></li><li><a href="historico/2026-06-26.html">📊 2026-06-26</a></li><li><a href="historico/2026-06-25.html">📊 2026-06-25</a></li><li><a href="historico/2026-06-24.html">📊 2026-06-24</a></li><li><a href="historico/2026-06-23.html">📊 2026-06-23</a></li><li><a href="historico/2026-06-22.html">📊 2026-06-22</a></li><li><a href="historico/2026-06-19.html">📊 2026-06-19</a></li><li><a href="historico/2026-06-18.html">📊 2026-06-18</a></li><li><a href="historico/2026-06-17.html">📊 2026-06-17</a></li><li><a href="historico/2026-06-16.html">📊 2026-06-16</a></li><li><a href="historico/2026-06-15.html">📊 2026-06-15</a></li><li><a href="historico/2026-06-12.html">📊 2026-06-12</a></li><li><a href="historico/2026-06-11.html">📊 2026-06-11</a></li><li><a href="historico/2026-06-10.html">📊 2026-06-10</a></li><li><a href="historico/2026-06-09.html">📊 2026-06-09</a></li><li><a href="historico/2026-06-08.html">📊 2026-06-08</a></li><li><a href="historico/2026-06-05.html">📊 2026-06-05</a></li><li><a href="historico/2026-06-04.html">📊 2026-06-04</a></li><li><a href="historico/2026-06-03.html">📊 2026-06-03</a></li><li><a href="historico/2026-06-02.html">📊 2026-06-02</a></li><li><a href="historico/2026-06-01.html">📊 2026-06-01</a></li><li><a href="historico/2026-05-29.html">📊 2026-05-29</a></li></ul>
+<h1>📊 Morning Note + Dashboard de Oportunidades</h1>
+<p class="sub">Actualización automática diaria (L-V) — Datos en tiempo real</p>
+
+<div class="btn-group">
+  <a href="latest.html" class="btn">📈 Morning Note de Hoy</a>
+  <a href="dashboard-latest.html" class="btn dashboard">🎯 Dashboard de Oportunidades</a>
 </div>
+
+<div class="caja">
+  <h2>📚 Histórico Morning Notes</h2>
+  <ul id="mn-links"></ul>
+</div>
+
+<div class="caja" style="margin-top:24px;">
+  <h2>📚 Histórico Dashboards</h2>
+  <ul id="db-links"></ul>
+</div>
+
+<script>
+// Cargar enlaces dinámicamente desde el servidor
+fetch('historico/')
+  .then(r => r.text())
+  .then(html => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const links = doc.querySelectorAll('a');
+    const mnList = document.getElementById('mn-links');
+    const dbList = document.getElementById('db-links');
+    
+    let mnFiles = [];
+    let dbFiles = [];
+    
+    links.forEach(a => {
+      const href = a.getAttribute('href');
+      if (href && href.endsWith('.html') && !href.includes('..')) {
+        if (href.startsWith('historico/')) {
+          mnFiles.push(href);
+        } else if (href.startsWith('dashboard-historico/')) {
+          dbFiles.push(href);
+        }
+      }
+    });
+    
+    mnFiles.sort().reverse().slice(0, 15).forEach(f => {
+      const li = document.createElement('li');
+      const date = f.replace('historico/', '').replace('.html', '');
+      li.innerHTML = `<a href="${f}">📊 ${date}</a>`;
+      mnList.appendChild(li);
+    });
+    
+    dbFiles.sort().reverse().slice(0, 15).forEach(f => {
+      const li = document.createElement('li');
+      const date = f.replace('dashboard-historico/', '').replace('.html', '');
+      li.innerHTML = `<a href="${f}">🎯 ${date}</a>`;
+      dbList.appendChild(li);
+    });
+  })
+  .catch(() => {
+    document.getElementById('mn-links').innerHTML = '<li style="color:#8b949e;">Cargando...</li>';
+    document.getElementById('db-links').innerHTML = '<li style="color:#8b949e;">Cargando...</li>';
+  });
+</script>
+
+<footer style="margin-top:40px;color:#8b949e;font-size:12px;border-top:1px solid #30363d;padding-top:20px;">
+  <p>Datos: Yahoo Finance • Análisis con IA • No asesoramiento financiero</p>
+</footer>
 </body>
 </html>
