@@ -7,23 +7,51 @@
 <style>
 body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,sans-serif;padding:40px 20px;}
 .wrap{max-width:800px;margin:0 auto;}
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb{color:#8b949e;font-size:13px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #30363d;}
+.breadcrumb a{color:#58a6ff;text-decoration:none;}
+.breadcrumb a:hover{color:#79c0ff;}
+.breadcrumb span{color:#30363d;margin:0 6px;}
+
+/* ===== CONTENIDO ===== */
 h1{color:#f0f6fc;font-size:28px;border-bottom:2px solid #30363d;padding-bottom:16px;}
 a{color:#58a6ff;text-decoration:none;}
 a:hover{color:#79c0ff;}
 ul{list-style:none;padding:0;}
 li{padding:12px 0;border-bottom:1px solid #21262d;}
 li a{display:block;font-size:16px;}
-.back{display:inline-block;margin-top:20px;padding:8px 20px;background:#21262d;border-radius:6px;color:#c9d1d9;}
-.back:hover{background:#30363d;}
 .count{color:#8b949e;font-size:14px;margin-top:8px;}
+
+/* ===== BOTONES DE NAVEGACIÓN ===== */
+.nav-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;padding-top:20px;border-top:1px solid #30363d;}
+.btn-back{display:inline-block;padding:10px 24px;background:#21262d;border-radius:6px;color:#c9d1d9;text-decoration:none;font-size:14px;transition:background 0.2s;}
+.btn-back:hover{background:#30363d;color:#f0f6fc;}
+.btn-back.primary{background:#1f6feb;color:#fff;}
+.btn-back.primary:hover{background:#388bfd;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){body{padding:20px 12px;}li{padding:10px 0;}li a{font-size:14px;}}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <!-- BREADCRUMB -->
+  <nav class="breadcrumb">
+    <a href="../">🏠 Inicio</a> <span>›</span> <span>Morning Notes</span>
+  </nav>
+
   <h1>📈 Morning Notes - Histórico</h1>
   <p class="count">34 archivos disponibles</p>
   <ul><li><a href="2026-07-15.html">📊 2026-07-15</a></li><li><a href="2026-07-09.html">📊 2026-07-09</a></li><li><a href="2026-07-08.html">📊 2026-07-08</a></li><li><a href="2026-07-07.html">📊 2026-07-07</a></li><li><a href="2026-07-06.html">📊 2026-07-06</a></li><li><a href="2026-07-03.html">📊 2026-07-03</a></li><li><a href="2026-07-02.html">📊 2026-07-02</a></li><li><a href="2026-07-01.html">📊 2026-07-01</a></li><li><a href="2026-06-30.html">📊 2026-06-30</a></li><li><a href="2026-06-29.html">📊 2026-06-29</a></li><li><a href="2026-06-26.html">📊 2026-06-26</a></li><li><a href="2026-06-25.html">📊 2026-06-25</a></li><li><a href="2026-06-24.html">📊 2026-06-24</a></li><li><a href="2026-06-23.html">📊 2026-06-23</a></li><li><a href="2026-06-22.html">📊 2026-06-22</a></li><li><a href="2026-06-19.html">📊 2026-06-19</a></li><li><a href="2026-06-18.html">📊 2026-06-18</a></li><li><a href="2026-06-17.html">📊 2026-06-17</a></li><li><a href="2026-06-16.html">📊 2026-06-16</a></li><li><a href="2026-06-15.html">📊 2026-06-15</a></li><li><a href="2026-06-12.html">📊 2026-06-12</a></li><li><a href="2026-06-11.html">📊 2026-06-11</a></li><li><a href="2026-06-10.html">📊 2026-06-10</a></li><li><a href="2026-06-09.html">📊 2026-06-09</a></li><li><a href="2026-06-08.html">📊 2026-06-08</a></li><li><a href="2026-06-05.html">📊 2026-06-05</a></li><li><a href="2026-06-04.html">📊 2026-06-04</a></li><li><a href="2026-06-03.html">📊 2026-06-03</a></li><li><a href="2026-06-02.html">📊 2026-06-02</a></li><li><a href="2026-06-01.html">📊 2026-06-01</a></li><li><a href="2026-05-29.html">📊 2026-05-29</a></li><li><a href="2026-05-28.html">📊 2026-05-28</a></li><li><a href="2026-05-27.html">📊 2026-05-27</a></li><li><a href="2026-05-22.html">📊 2026-05-22</a></li></ul>
-  <a href="../" class="back">← Volver al inicio</a>
+
+  <!-- BOTONES DE NAVEGACIÓN -->
+  <div class="nav-actions">
+    <a href="../" class="btn-back">← Volver al inicio</a>
+    <a href="../latest.html" class="btn-back primary">📄 Ir al briefing de hoy</a>
+  </div>
+
 </div>
 </body>
 </html>
