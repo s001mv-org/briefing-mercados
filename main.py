@@ -310,7 +310,7 @@ with open(f"historico/{fecha_hoy}.html", "w", encoding="utf-8") as f:
 print(f"✅ historico/{fecha_hoy}.html guardado")
 
 # ==========================================
-# 7. LANDING PAGE (index.html) - TREE MENÚ
+# 7. LANDING PAGE (index.html) - TREE MENÚ MEJORADO
 # ==========================================
 def generar_tree_html():
     """Genera el HTML del árbol con los enlaces actuales y contadores CORREGIDOS"""
@@ -324,13 +324,13 @@ def generar_tree_html():
     # Obtener fecha de hoy para el badge
     hoy = datetime.utcnow().strftime("%d/%m/%Y")
     
-    # Generar listas de históricos (top 5 para mostrar)
+    # Generar listas de históricos (top 5) - AHORA SON ENLACES CLICABLES
     mn_list_items = "".join([
-        f'<a href="{f}" style="color:#58a6ff;font-size:12px;text-decoration:none;">{f.replace("historico/","").replace(".html","")}</a>'
+        f'<a href="{f}" class="link-ultimo">📄 {f.replace("historico/","").replace(".html","")}</a>'
         for f in mn_files[:5]
     ])
     db_list_items = "".join([
-        f'<a href="{f}" style="color:#58a6ff;font-size:12px;text-decoration:none;">{f.replace("dashboard-historico/","").replace(".html","")}</a>'
+        f'<a href="{f}" class="link-ultimo">📊 {f.replace("dashboard-historico/","").replace(".html","")}</a>'
         for f in db_files[:5]
     ])
     
@@ -366,7 +366,7 @@ def generar_tree_html():
               </a>
             </div>
           </li>
-          {f'<li class="leaf"><div class="label" style="padding:4px 14px 4px 44px;font-size:12px;color:#8b949e;cursor:default;flex-wrap:wrap;gap:4px;">📋 Últimos: <span style="display:inline-flex;gap:6px;flex-wrap:wrap;">{mn_list_items}</span></div></li>' if mn_has_items else ''}
+          {f'<li class="leaf ultimos-row"><div class="label ultimos-container"><span class="ultimos-label">📋 Últimos:</span> <span class="ultimos-links">{mn_list_items}</span></div></li>' if mn_has_items else ''}
         </ul>
       </li>
 
@@ -395,7 +395,7 @@ def generar_tree_html():
               </a>
             </div>
           </li>
-          {f'<li class="leaf"><div class="label" style="padding:4px 14px 4px 44px;font-size:12px;color:#8b949e;cursor:default;flex-wrap:wrap;gap:4px;">📋 Últimos: <span style="display:inline-flex;gap:6px;flex-wrap:wrap;">{db_list_items}</span></div></li>' if db_has_items else ''}
+          {f'<li class="leaf ultimos-row"><div class="label ultimos-container"><span class="ultimos-label">📋 Últimos:</span> <span class="ultimos-links">{db_list_items}</span></div></li>' if db_has_items else ''}
         </ul>
       </li>
 
@@ -485,6 +485,48 @@ header{{border-bottom:2px solid #30363d;padding-bottom:16px;margin-bottom:24px;}
 .tree .leaf .label .badge-small{{background:#21262d;padding:1px 10px;border-radius:12px;font-size:10px;color:#8b949e;margin-left:auto;white-space:nowrap;}}
 
 /* ========================================
+   ESTILOS PARA "ÚLTIMOS"
+   ======================================== */
+.ultimos-row .label{{
+    padding: 8px 16px 8px 44px !important;
+    min-height: auto !important;
+    flex-wrap: wrap;
+    gap: 6px;
+}}
+.ultimos-container{{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}}
+.ultimos-label{{
+    color: #8b949e;
+    font-size: 12px;
+    font-weight: 500;
+}}
+.ultimos-links{{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}}
+.link-ultimo{{
+    color: #58a6ff;
+    font-size: 12px;
+    text-decoration: none;
+    background: #1c2333;
+    padding: 2px 10px;
+    border-radius: 12px;
+    border: 1px solid #30363d;
+    transition: all 0.2s;
+}}
+.link-ultimo:hover{{
+    background: #30363d;
+    color: #79c0ff;
+    border-color: #58a6ff;
+}}
+
+/* ========================================
    FOOTER
    ======================================== */
 footer{{margin-top:40px;padding-top:16px;border-top:1px solid #30363d;color:#8b949e;font-size:12px;text-align:center;}}
@@ -504,6 +546,7 @@ footer .version{{color:#30363d;font-size:10px;}}
   .tree .node > .label .icon{{font-size:16px;width:24px;}}
   .tree .leaf .label .today-badge{{font-size:9px;padding:1px 8px;}}
   .tree .leaf .label .badge-small{{font-size:9px;padding:1px 8px;}}
+  .link-ultimo{{font-size:11px;padding:1px 8px;}}
 }}
 
 @media(max-width:480px){{
@@ -606,13 +649,13 @@ console.log('🎯 Oportunidades:', document.querySelectorAll('.node:nth-child(2)
 # Guardar la landing page
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(landing)
-print("✅ index.html guardado (con Tree Menú)")
+print("✅ index.html guardado (con Tree Menú mejorado)")
 
 # ==========================================
 # 8. GENERAR INDEX.HTML PARA CARPETAS DE HISTÓRICO
 # ==========================================
 def generar_index_historico(carpeta, titulo, icono):
-    """Genera un index.html dentro de la carpeta de histórico para listar archivos"""
+    """Genera un index.html dentro de la carpeta de histórico con navegación mejorada"""
     archivos = sorted([f for f in glob.glob(f"{carpeta}/*.html") if not f.endswith("index.html")], reverse=True)
     
     if not archivos:
@@ -624,6 +667,9 @@ def generar_index_historico(carpeta, titulo, icono):
         for a in archivos
     ])
     
+    # Determinar la ruta de vuelta (para breadcrumb)
+    ruta_inicio = "../" if carpeta == "historico" or carpeta == "dashboard-historico" else "../../"
+    
     html = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -633,23 +679,51 @@ def generar_index_historico(carpeta, titulo, icono):
 <style>
 body{{background:#0d1117;color:#c9d1d9;font-family:-apple-system,sans-serif;padding:40px 20px;}}
 .wrap{{max-width:800px;margin:0 auto;}}
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb{{color:#8b949e;font-size:13px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #30363d;}}
+.breadcrumb a{{color:#58a6ff;text-decoration:none;}}
+.breadcrumb a:hover{{color:#79c0ff;}}
+.breadcrumb span{{color:#30363d;margin:0 6px;}}
+
+/* ===== CONTENIDO ===== */
 h1{{color:#f0f6fc;font-size:28px;border-bottom:2px solid #30363d;padding-bottom:16px;}}
 a{{color:#58a6ff;text-decoration:none;}}
 a:hover{{color:#79c0ff;}}
 ul{{list-style:none;padding:0;}}
 li{{padding:12px 0;border-bottom:1px solid #21262d;}}
 li a{{display:block;font-size:16px;}}
-.back{{display:inline-block;margin-top:20px;padding:8px 20px;background:#21262d;border-radius:6px;color:#c9d1d9;}}
-.back:hover{{background:#30363d;}}
 .count{{color:#8b949e;font-size:14px;margin-top:8px;}}
+
+/* ===== BOTONES DE NAVEGACIÓN ===== */
+.nav-actions{{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;padding-top:20px;border-top:1px solid #30363d;}}
+.btn-back{{display:inline-block;padding:10px 24px;background:#21262d;border-radius:6px;color:#c9d1d9;text-decoration:none;font-size:14px;transition:background 0.2s;}}
+.btn-back:hover{{background:#30363d;color:#f0f6fc;}}
+.btn-back.primary{{background:#1f6feb;color:#fff;}}
+.btn-back.primary:hover{{background:#388bfd;}}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){{body{{padding:20px 12px;}}li{{padding:10px 0;}}li a{{font-size:14px;}}}}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <!-- BREADCRUMB -->
+  <nav class="breadcrumb">
+    <a href="{ruta_inicio}">🏠 Inicio</a> <span>›</span> <span>{titulo}</span>
+  </nav>
+
   <h1>{icono} {titulo} - Histórico</h1>
   <p class="count">{len(archivos)} archivos disponibles</p>
   <ul>{enlaces}</ul>
-  <a href="../" class="back">← Volver al inicio</a>
+
+  <!-- BOTONES DE NAVEGACIÓN -->
+  <div class="nav-actions">
+    <a href="{ruta_inicio}" class="btn-back">← Volver al inicio</a>
+    <a href="{ruta_inicio}latest.html" class="btn-back primary">📄 Ir al briefing de hoy</a>
+  </div>
+
 </div>
 </body>
 </html>"""
@@ -663,3 +737,5 @@ generar_index_historico("historico", "Morning Notes", "📈")
 generar_index_historico("dashboard-historico", "Dashboards", "🎯")
 
 print("\n🎉 PROCESO COMPLETADO")
+print(f"📊 Morning Notes: {len(glob.glob('historico/*.html')) - 1} archivos (excluyendo index.html)")
+print(f"🎯 Dashboards: {len(glob.glob('dashboard-historico/*.html')) - 1} archivos (excluyendo index.html)")
