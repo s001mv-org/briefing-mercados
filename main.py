@@ -310,10 +310,10 @@ with open(f"historico/{fecha_hoy}.html", "w", encoding="utf-8") as f:
 print(f"✅ historico/{fecha_hoy}.html guardado")
 
 # ==========================================
-# 7. LANDING PAGE (index.html) - TREE MENÚ MEJORADO
+# 7. LANDING PAGE (index.html) - CON BOTÓN DE ACTUALIZACIÓN
 # ==========================================
 def generar_tree_html():
-    """Genera el HTML del árbol con los enlaces actuales y contadores CORREGIDOS"""
+    """Genera el HTML del árbol con los enlaces actuales y contadores"""
     
     # Contar archivos históricos (solo .html, excluyendo index.html)
     mn_files = sorted([f for f in glob.glob("historico/*.html") if not f.endswith("index.html")], reverse=True)
@@ -324,7 +324,7 @@ def generar_tree_html():
     # Obtener fecha de hoy para el badge
     hoy = datetime.utcnow().strftime("%d/%m/%Y")
     
-    # Generar listas de históricos (top 5) - AHORA SON ENLACES CLICABLES
+    # Generar listas de históricos (top 5) - enlaces clicables
     mn_list_items = "".join([
         f'<a href="{f}" class="link-ultimo">📄 {f.replace("historico/","").replace(".html","")}</a>'
         for f in mn_files[:5]
@@ -458,6 +458,58 @@ header{{border-bottom:2px solid #30363d;padding-bottom:16px;margin-bottom:24px;}
 .subtitle{{color:#8b949e;font-size:13px;margin-top:4px;}}
 
 /* ========================================
+   HEADER ACTIONS (BOTÓN ACTUALIZAR)
+   ======================================== */
+.header-actions{{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #30363d;
+}}
+.btn-update{{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #238636;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: 1px solid #2ea043;
+}}
+.btn-update:hover{{
+    background: #2ea043;
+    transform: scale(1.02);
+}}
+.btn-update:active{{
+    transform: scale(0.98);
+}}
+.update-info{{
+    color: #8b949e;
+    font-size: 12px;
+}}
+.update-info .status-dot{{
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00d4aa;
+    margin-right: 4px;
+    animation: pulse-dot 2s infinite;
+}}
+@keyframes pulse-dot{{
+    0%{{opacity:1;}}
+    50%{{opacity:0.3;}}
+    100%{{opacity:1;}}
+}}
+
+/* ========================================
    TREE MENÚ
    ======================================== */
 .tree{{list-style:none;padding:0;margin:0 0 30px;}}
@@ -547,6 +599,8 @@ footer .version{{color:#30363d;font-size:10px;}}
   .tree .leaf .label .today-badge{{font-size:9px;padding:1px 8px;}}
   .tree .leaf .label .badge-small{{font-size:9px;padding:1px 8px;}}
   .link-ultimo{{font-size:11px;padding:1px 8px;}}
+  .header-actions{{flex-direction:column;align-items:stretch;}}
+  .btn-update{{justify-content:center;}}
 }}
 
 @media(max-width:480px){{
@@ -558,7 +612,7 @@ footer .version{{color:#30363d;font-size:10px;}}
 }}
 
 /* ========================================
-   SCROLLBAR PERSONALIZADA (opcional)
+   SCROLLBAR PERSONALIZADA
    ======================================== */
 ::-webkit-scrollbar{{width:6px;height:6px;}}
 ::-webkit-scrollbar-track{{background:#0d1117;}}
@@ -576,6 +630,19 @@ footer .version{{color:#30363d;font-size:10px;}}
     <span class="badge">v2.0</span>
   </div>
   <div class="subtitle">Actualización automática diaria (L-V) · Datos en tiempo real</div>
+  
+  <!-- ===== BOTÓN DE ACTUALIZACIÓN ===== -->
+  <div class="header-actions">
+    <a href="https://github.com/s001mv-org/briefing-mercados/actions/workflows/automate.yml" 
+       target="_blank" 
+       class="btn-update">
+      🔄 Actualizar ahora
+    </a>
+    <span class="update-info">
+      <span class="status-dot"></span>
+      Última actualización: {datetime.utcnow().strftime("%d/%m/%Y %H:%M")} UTC
+    </span>
+  </div>
 </header>
 
 <!-- ===== TREE MENÚ (generado dinámicamente) ===== -->
@@ -584,7 +651,7 @@ footer .version{{color:#30363d;font-size:10px;}}
 <!-- ===== FOOTER ===== -->
 <footer>
   <p>Datos: Yahoo Finance · Análisis con IA · No asesoramiento financiero</p>
-  <p class="version">v2.0 · Generado automáticamente · {datetime.utcnow().strftime("%d/%m/%Y %H:%M")} UTC</p>
+  <p class="version">v2.0 · Generado automáticamente</p>
 </footer>
 
 </div>
@@ -649,7 +716,7 @@ console.log('🎯 Oportunidades:', document.querySelectorAll('.node:nth-child(2)
 # Guardar la landing page
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(landing)
-print("✅ index.html guardado (con Tree Menú mejorado)")
+print("✅ index.html guardado (con botón de actualización)")
 
 # ==========================================
 # 8. GENERAR INDEX.HTML PARA CARPETAS DE HISTÓRICO
