@@ -313,26 +313,30 @@ print(f"✅ historico/{fecha_hoy}.html guardado")
 # 7. LANDING PAGE (index.html) - TREE MENÚ
 # ==========================================
 def generar_tree_html():
-    """Genera el HTML del árbol con los enlaces actuales y contadores"""
+    """Genera el HTML del árbol con los enlaces actuales y contadores CORREGIDOS"""
     
-    # Contar archivos históricos
-    mn_files = sorted(glob.glob("historico/*.html"), reverse=True)
-    db_files = sorted(glob.glob("dashboard-historico/*.html"), reverse=True)
+    # Contar archivos históricos (solo .html, excluyendo index.html)
+    mn_files = sorted([f for f in glob.glob("historico/*.html") if not f.endswith("index.html")], reverse=True)
+    db_files = sorted([f for f in glob.glob("dashboard-historico/*.html") if not f.endswith("index.html")], reverse=True)
     mn_count = len(mn_files)
     db_count = len(db_files)
     
     # Obtener fecha de hoy para el badge
     hoy = datetime.utcnow().strftime("%d/%m/%Y")
     
-    # Generar listas de históricos (top 5 para mostrar en tooltip)
-    mn_list = "".join([
-        f'<li><a href="{f}">📊 {f.replace("historico/","").replace(".html","")}</a></li>'
+    # Generar listas de históricos (top 5 para mostrar)
+    mn_list_items = "".join([
+        f'<a href="{f}" style="color:#58a6ff;font-size:12px;text-decoration:none;">{f.replace("historico/","").replace(".html","")}</a>'
         for f in mn_files[:5]
     ])
-    db_list = "".join([
-        f'<li><a href="{f}">🎯 {f.replace("dashboard-historico/","").replace(".html","")}</a></li>'
+    db_list_items = "".join([
+        f'<a href="{f}" style="color:#58a6ff;font-size:12px;text-decoration:none;">{f.replace("dashboard-historico/","").replace(".html","")}</a>'
         for f in db_files[:5]
     ])
+    
+    # Determinar si hay históricos para mostrar
+    mn_has_items = mn_count > 0
+    db_has_items = db_count > 0
     
     return f'''
     <ul class="tree" id="treeMenu">
@@ -362,7 +366,7 @@ def generar_tree_html():
               </a>
             </div>
           </li>
-          {f'<li class="leaf"><div class="label" style="padding:4px 14px 4px 44px;font-size:12px;color:#8b949e;cursor:default;">📋 Últimos: {mn_list}</div></li>' if mn_count > 0 else ''}
+          {f'<li class="leaf"><div class="label" style="padding:4px 14px 4px 44px;font-size:12px;color:#8b949e;cursor:default;flex-wrap:wrap;gap:4px;">📋 Últimos: <span style="display:inline-flex;gap:6px;flex-wrap:wrap;">{mn_list_items}</span></div></li>' if mn_has_items else ''}
         </ul>
       </li>
 
@@ -391,7 +395,7 @@ def generar_tree_html():
               </a>
             </div>
           </li>
-          {f'<li class="leaf"><div class="label" style="padding:4px 14px 4px 44px;font-size:12px;color:#8b949e;cursor:default;">📋 Últimos: {db_list}</div></li>' if db_count > 0 else ''}
+          {f'<li class="leaf"><div class="label" style="padding:4px 14px 4px 44px;font-size:12px;color:#8b949e;cursor:default;flex-wrap:wrap;gap:4px;">📋 Últimos: <span style="display:inline-flex;gap:6px;flex-wrap:wrap;">{db_list_items}</span></div></li>' if db_has_items else ''}
         </ul>
       </li>
 
@@ -603,5 +607,59 @@ console.log('🎯 Oportunidades:', document.querySelectorAll('.node:nth-child(2)
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(landing)
 print("✅ index.html guardado (con Tree Menú)")
+
+# ==========================================
+# 8. GENERAR INDEX.HTML PARA CARPETAS DE HISTÓRICO
+# ==========================================
+def generar_index_historico(carpeta, titulo, icono):
+    """Genera un index.html dentro de la carpeta de histórico para listar archivos"""
+    archivos = sorted([f for f in glob.glob(f"{carpeta}/*.html") if not f.endswith("index.html")], reverse=True)
+    
+    if not archivos:
+        print(f"⚠️ No hay archivos en {carpeta} para generar índice")
+        return
+    
+    enlaces = "".join([
+        f'<li><a href="{os.path.basename(a)}">📊 {os.path.basename(a).replace(".html","")}</a></li>'
+        for a in archivos
+    ])
+    
+    html = f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{titulo} - Histórico</title>
+<style>
+body{{background:#0d1117;color:#c9d1d9;font-family:-apple-system,sans-serif;padding:40px 20px;}}
+.wrap{{max-width:800px;margin:0 auto;}}
+h1{{color:#f0f6fc;font-size:28px;border-bottom:2px solid #30363d;padding-bottom:16px;}}
+a{{color:#58a6ff;text-decoration:none;}}
+a:hover{{color:#79c0ff;}}
+ul{{list-style:none;padding:0;}}
+li{{padding:12px 0;border-bottom:1px solid #21262d;}}
+li a{{display:block;font-size:16px;}}
+.back{{display:inline-block;margin-top:20px;padding:8px 20px;background:#21262d;border-radius:6px;color:#c9d1d9;}}
+.back:hover{{background:#30363d;}}
+.count{{color:#8b949e;font-size:14px;margin-top:8px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>{icono} {titulo} - Histórico</h1>
+  <p class="count">{len(archivos)} archivos disponibles</p>
+  <ul>{enlaces}</ul>
+  <a href="../" class="back">← Volver al inicio</a>
+</div>
+</body>
+</html>"""
+    
+    with open(f"{carpeta}/index.html", "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"✅ {carpeta}/index.html generado ({len(archivos)} archivos)")
+
+# Generar índices para históricos
+generar_index_historico("historico", "Morning Notes", "📈")
+generar_index_historico("dashboard-historico", "Dashboards", "🎯")
 
 print("\n🎉 PROCESO COMPLETADO")
