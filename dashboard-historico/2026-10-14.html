@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard de Oportunidades - 14/10/2026</title>
+<style>
+*{box-sizing:border-box;}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.6;margin:0;padding:30px;}
+.wrap{max-width:1200px;margin:0 auto;}
+header{border-bottom:2px solid #30363d;padding-bottom:20px;margin-bottom:30px;}
+.tag{display:inline-block;background:#1f6feb;color:#fff;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+h1{color:#f0f6fc;font-size:30px;margin:12px 0 4px;font-weight:700;}
+h2{color:#f0f6fc;font-size:22px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #30363d;}
+.meta{color:#8b949e;font-size:14px;margin-top:6px;}
+.banner-perfil{background:#1f6feb15;border:1px solid #1f6feb55;padding:10px 14px;border-radius:4px;font-size:13px;margin-bottom:20px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin:20px 0;}
+.kpi{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:15px;text-align:center;}
+.kpi .num{font-size:32px;font-weight:700;color:#f0f6fc;}
+.kpi .num.green{color:#00d4aa;}
+.kpi .num.blue{color:#58a6ff;}
+.kpi .num.orange{color:#f0883e;}
+.kpi .num.purple{color:#d2a8ff;}
+.kpi .label{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;}
+.filter-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0;padding:12px 20px;background:#161b22;border:1px solid #30363d;border-radius:8px;}
+.filter-bar select,.filter-bar input{background:#0d1117;color:#c9d1d9;border:1px solid #30363d;border-radius:6px;padding:8px 14px;font-size:13px;min-width:120px;}
+.filter-bar button{background:#1f6feb;color:#fff;border:none;border-radius:6px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s ease;}
+.filter-bar button:hover{background:#388bfd;}
+.filter-bar label{font-size:13px;color:#8b949e;white-space:nowrap;}
+.filter-bar input[type="range"]{min-width:120px;}
+table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:13px;background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden;}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #21262d;}
+th{background:#21262d;color:#f0f6fc;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;user-select:none;position:sticky;top:0;z-index:10;}
+th:hover{background:#30363d;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;font-family:"SF Mono",Menlo,monospace;}
+.badge-bull{background:#00d4aa25;color:#00d4aa;border:1px solid #00d4aa55;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.badge-buy{background:#58a6ff25;color:#58a6ff;border:1px solid #58a6ff55;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.badge-hold{background:#f0883e25;color:#f0883e;border:1px solid #f0883e55;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.badge-sell{background:#ff475725;color:#ff4757;border:1px solid #ff475755;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.badge-na{background:#8b949e25;color:#8b949e;border:1px solid #8b949e55;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.risk-card{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px 16px;}
+.risk-card h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+.risk-card.visible h4{color:#f0883e;}
+.risk-card.hidden h4{color:#ff4757;}
+.risk-card.scenario h4{color:#58a6ff;}
+.risk-card.signal h4{color:#00d4aa;}
+.risk-card p{margin:0;font-size:14px;line-height:1.55;}
+.callout-danger{background:#161b22;border-left:4px solid #ff4757;padding:12px 16px;margin:12px 0;border-radius:0 4px 4px 0;}
+.callout-danger strong{color:#ff4757;}
+footer{margin-top:40px;padding-top:20px;border-top:1px solid #30363d;color:#8b949e;font-size:12px;}
+footer p{font-size:12px;margin:6px 0;}
+ul.check{list-style:none;padding:0;margin:8px 0;}
+ul.check li{padding:6px 0;border-bottom:1px solid #21262d;font-size:14px;}
+ul.check li:last-child{border-bottom:none;}
+@media(max-width:720px){.risk-grid{grid-template-columns:1fr;}h1{font-size:24px;}th,td{font-size:11px;padding:6px 8px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===== HEADER ===== -->
+<header>
+    <span class="tag">📊 DASHBOARD</span>
+    <h1>Dashboard de Oportunidades de Inversión</h1>
+    <p style="color:#8b949e;margin:4px 0 0;">Screening de valor durante correcciones de mercado</p>
+    <div class="meta">14/10/2026 — 09:58 CEST</div>
+</header>
+
+<div class="banner-perfil">
+    <strong>Perfil estándar.</strong> 18 acciones analizadas · 
+    S&amp;P 500 + Nasdaq · Criterios: Value · Growth · Quality · Momentum
+</div>
+
+<!-- ===== KPI GRID ===== -->
+<div class="kpi-grid">
+    <div class="kpi"><div class="num">18</div><div class="label">📊 Acciones Analizadas</div></div>
+    <div class="kpi"><div class="num green">0</div><div class="label">⭐ Oportunidades (>70 pts)</div></div>
+    <div class="kpi"><div class="num blue">43.8</div><div class="label">📈 Score Promedio</div></div>
+    <div class="kpi"><div class="num orange">Technology</div><div class="label">🏆 Sector Líder</div></div>
+</div>
+
+<!-- ===== GRÁFICO DE BARRAS 24h ===== -->
+<h2>📊 Variación 24h (Top 10 acciones)</h2>
+<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:10px;">
+    
+    <svg viewBox="0 0 650 230" style="width:100%;height:auto;">
+        <rect x="0" y="0" width="650" height="230" fill="#0d1117" rx="4"/>
+        <line x1="30" y1="180" x2="620" y2="180" stroke="#30363d" stroke-width="1.5"/>
+        
+        <rect x="50" y="145.60283687943263" width="50" height="34.39716312056737" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="75.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">NVDA</text>
+        <text x="75.0" y="139.60283687943263" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+1.0%</text>
+        
+        <rect x="110" y="154.11347517730496" width="50" height="25.88652482269503" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="135.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">AVGO</text>
+        <text x="135.0" y="148.11347517730496" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+0.7%</text>
+        
+        <rect x="170" y="30" width="50" height="150" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="195.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">ORCL</text>
+        <text x="195.0" y="24" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+4.2%</text>
+        
+        <rect x="230" y="117.94326241134752" width="50" height="62.056737588652474" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="255.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">CRM</text>
+        <text x="255.0" y="111.94326241134752" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+1.8%</text>
+        
+        <rect x="290" y="180" width="50" height="7.446808510638297" fill="#ff4757" rx="3" opacity="0.9"/>
+        <text x="315.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">NFLX</text>
+        <text x="315.0" y="174" text-anchor="middle" fill="#ff4757" font-size="10" font-weight="bold">-0.2%</text>
+        
+        <rect x="350" y="169.36170212765958" width="50" height="10.638297872340424" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="375.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">GOOGL</text>
+        <text x="375.0" y="163.36170212765958" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+0.3%</text>
+        
+        <rect x="410" y="180" width="50" height="48.226950354609926" fill="#ff4757" rx="3" opacity="0.9"/>
+        <text x="435.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">LLY</text>
+        <text x="435.0" y="174" text-anchor="middle" fill="#ff4757" font-size="10" font-weight="bold">-1.4%</text>
+        
+        <rect x="470" y="112.62411347517731" width="50" height="67.37588652482269" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="495.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">AMD</text>
+        <text x="495.0" y="106.62411347517731" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+1.9%</text>
+        
+        <rect x="530" y="86.73758865248229" width="50" height="93.26241134751771" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="555.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">META</text>
+        <text x="555.0" y="80.73758865248229" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+2.6%</text>
+        
+        <rect x="590" y="164.75177304964538" width="50" height="15.248226950354608" fill="#00d4aa" rx="3" opacity="0.9"/>
+        <text x="615.0" y="200" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="bold">MSFT</text>
+        <text x="615.0" y="158.75177304964538" text-anchor="middle" fill="#00d4aa" font-size="10" font-weight="bold">+0.4%</text>
+        
+        <text x="325" y="225" fill="#8b949e" font-size="11" text-anchor="middle">Variación 24h (%) · Top 10 acciones</text>
+    </svg>
+    
+</div>
+
+<!-- ===== MAPA DE BURBUJAS ===== -->
+<h2>🎯 Mapa de Oportunidades</h2>
+<div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;text-align:center;">
+    
+    <svg viewBox="0 0 900 500" style="max-width:100%;height:auto;">
+        <rect x="0" y="0" width="900" height="500" fill="#0d1117" rx="4"/>
+        <line x1="100" y1="430" x2="830" y2="430" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="100" y1="430" x2="100" y2="50" stroke="#30363d" stroke-width="1.5"/>
+        <text x="460" y="470" fill="#8b949e" font-size="12" text-anchor="middle">⬅️ Barato ··· VALUE ··· Caro ➡️</text>
+        <text x="40" y="240" fill="#8b949e" font-size="12" text-anchor="middle" transform="rotate(-90,40,240)">⬅️ Baja Calidad ··· QUALITY ··· Alta Calidad ➡️</text>
+        <line x1="100" y1="330" x2="830" y2="330" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="465" y1="430" x2="465" y2="50" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
+        
+        <circle cx="464.0" cy="141.2" r="35" fill="#58a6ff" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="464.0" y="145.2" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">NVDA</text>
+        
+        <circle cx="408.0" cy="217.2" r="32.0567" fill="#58a6ff" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="408.0" y="221.2" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">AVGO</text>
+        
+        <circle cx="436.0" cy="262.8" r="19.3411" fill="#58a6ff" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="436.0" y="266.8" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">ORCL</text>
+        
+        <circle cx="436.0" cy="308.4" r="16.9588" fill="#58a6ff" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="436.0" y="312.4" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">CRM</text>
+        
+        <circle cx="296.0" cy="217.2" r="17.9339" fill="#f0883e" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="296.0" y="221.2" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">NFLX</text>
+        
+        <circle cx="240.0" cy="247.6" r="35" fill="#f0883e" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="240.0" y="251.6" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">GOOGL</text>
+        
+        <circle cx="240.0" cy="156.40000000000003" r="25.4023" fill="#d2a8ff" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="240.0" y="160.40000000000003" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">LLY</text>
+        
+        <circle cx="240.0" cy="354.0" r="24.8851" fill="#58a6ff" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="240.0" y="358.0" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">AMD</text>
+        
+        <circle cx="324.0" cy="262.8" r="34.4247" fill="#f0883e" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="324.0" y="266.8" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">META</text>
+        
+        <circle cx="184.0" cy="247.6" r="35" fill="#58a6ff" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="184.0" y="251.6" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">MSFT</text>
+        
+        <circle cx="212.0" cy="293.20000000000005" r="35" fill="#00d4aa" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="212.0" y="297.20000000000005" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">AMZN</text>
+        
+        <circle cx="100.0" cy="156.40000000000003" r="35" fill="#58a6ff" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="100.0" y="160.40000000000003" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">AAPL</text>
+        
+        <circle cx="128.0" cy="186.79999999999998" r="22.435499999999998" fill="#ff4757" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="128.0" y="190.79999999999998" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">V</text>
+        
+        <circle cx="296.0" cy="262.8" r="23.810000000000002" fill="#ff4757" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="296.0" y="266.8" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">JPM</text>
+        
+        <circle cx="184.0" cy="278.0" r="18.5546" fill="#ffd93d" opacity="0.8" stroke="#0d1117" stroke-width="2"/>
+        <text x="184.0" y="282.0" text-anchor="middle" fill="#f0f6fc" font-size="10" font-weight="bold">PG</text>
+        
+        <rect x="730" y="55" width="160" height="120" fill="#161b22" rx="4" stroke="#30363d" stroke-width="1"/>
+        <text x="740" y="75" fill="#f0f6fc" font-size="11" font-weight="bold">SECTORES</text>
+        <circle cx="745" cy="95" r="6" fill="#58a6ff"/><text x="758" y="99" fill="#c9d1d9" font-size="10">Technology</text><circle cx="745" cy="115" r="6" fill="#f0883e"/><text x="758" y="119" fill="#c9d1d9" font-size="10">Communication Services</text><circle cx="745" cy="135" r="6" fill="#00d4aa"/><text x="758" y="139" fill="#c9d1d9" font-size="10">Consumer Cyclical</text><circle cx="745" cy="155" r="6" fill="#ff4757"/><text x="758" y="159" fill="#c9d1d9" font-size="10">Financial Services</text><circle cx="745" cy="175" r="6" fill="#d2a8ff"/><text x="758" y="179" fill="#c9d1d9" font-size="10">Healthcare</text>
+    </svg>
+    
+    <p style="color:#8b949e;font-size:12px;margin:8px 0 0;">Tamaño de burbuja = Capitalización de mercado · Color = Sector</p>
+</div>
+
+<!-- ===== FILTROS ===== -->
+<h2>🔍 Filtros Interactivos</h2>
+<div class="filter-bar">
+    <select id="sectorFilter" onchange="aplicarFiltros()">
+        <option value="all">Todos los sectores</option>
+        <option value="Communication Services">Communication Services</option><option value="Consumer Cyclical">Consumer Cyclical</option><option value="Consumer Defensive">Consumer Defensive</option><option value="Financial Services">Financial Services</option><option value="Healthcare">Healthcare</option><option value="Technology">Technology</option>
+    </select>
+    <label>Score mínimo:</label>
+    <input type="range" id="scoreFilter" min="0" max="100" value="0" oninput="aplicarFiltros()" style="width:150px;">
+    <span id="scoreLabel" style="font-size:13px;">0</span>
+    <select id="ratingFilter" onchange="aplicarFiltros()">
+        <option value="all">Todos los ratings</option>
+        <option value="strong_buy">Strong Buy</option>
+        <option value="buy">Buy</option>
+        <option value="hold">Hold</option>
+        <option value="sell">Sell</option>
+    </select>
+    <button onclick="resetearFiltros()">🔄 Resetear</button>
+    <span style="font-size:12px;color:#8b949e;margin-left:auto;" id="resultCount">Mostrando 18 acciones</span>
+</div>
+
+<!-- ===== TABLA ===== -->
+<h2>📋 Tabla de Oportunidades</h2>
+<p style="color:#8b949e;font-size:13px;margin:-8px 0 12px;">Haz clic en una fila para ver detalles · Haz clic en cabeceras para ordenar</p>
+<div style="overflow-x:auto;max-height:600px;overflow-y:auto;">
+    <table>
+        <thead>
+            <tr>
+                <th onclick="ordenarTabla(0)">Ticker</th>
+                <th onclick="ordenarTabla(1)">Nombre</th>
+                <th onclick="ordenarTabla(2)">Precio</th>
+                <th onclick="ordenarTabla(3)">Sector</th>
+                <th onclick="ordenarTabla(4)">Caída %</th>
+                <th onclick="ordenarTabla(5)">Var 24h</th>
+                <th onclick="ordenarTabla(6)">P/E</th>
+                <th onclick="ordenarTabla(7)">ROE %</th>
+                <th onclick="ordenarTabla(8)">Growth %</th>
+                <th onclick="ordenarTabla(9)">Score</th>
+                <th onclick="ordenarTabla(10)">Rating</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            
+        <tr onclick="toggleDetail('NVDA')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">NVDA</strong></td>
+            <td>Nvidia</td>
+            <td class="num">$228.52</td>
+            <td data-sector="Technology">Technology</td>
+            <td class="num" style="color:#f0883e;">6.1%</td>
+            <td class="num" style="color:#00d4aa;">+0.97%</td>
+            <td class="num">14.36</td>
+            <td class="num" style="color:#00d4aa;">117.21%</td>
+            <td class="num" style="color:#00d4aa;">105.9%</td>
+            <td class="num" style="font-weight:bold;color:#58a6ff;">68</td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
+        </tr>
+        <tr id="detail-NVDA" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">13/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:52.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">25/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:100.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">19/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:76.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 53.57% · Margen Neto: 63.66%<br>
+                        Deuda/Equity: 16.97 · FCF Yield: 0%<br>
+                        PEG: 0.28 · EV/EBITDA: 27.25
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        STRONG_BUY · Precio Objetivo: $328.72<br>
+                        59 analistas · Máx: $515.0 · Mín: $180.0<br>
+                        Dividendo: 44.0% · Market Cap: $5518.07B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('AVGO')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">AVGO</strong></td>
+            <td>Broadcom</td>
+            <td class="num">$357.31</td>
+            <td data-sector="Technology">Technology</td>
+            <td class="num" style="color:#00d4aa;">27.57%</td>
+            <td class="num" style="color:#00d4aa;">+0.73%</td>
+            <td class="num">18.42</td>
+            <td class="num" style="color:#00d4aa;">44.25%</td>
+            <td class="num" style="color:#00d4aa;">85.5%</td>
+            <td class="num" style="font-weight:bold;color:#58a6ff;">67</td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
+        </tr>
+        <tr id="detail-AVGO" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">25/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:100.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">14/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:56.00000000000001%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">17/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:68.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 15.37% · Margen Neto: 42.94%<br>
+                        Deuda/Equity: 59.6 · FCF Yield: 0%<br>
+                        PEG: 0.35 · EV/EBITDA: 33.32
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        STRONG_BUY · Precio Objetivo: $531.31<br>
+                        47 analistas · Máx: $715.0 · Mín: $215.88<br>
+                        Dividendo: 73.0% · Market Cap: $1705.67B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('ORCL')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">ORCL</strong></td>
+            <td>Oracle</td>
+            <td class="num">$143.20</td>
+            <td data-sector="Technology">Technology</td>
+            <td class="num" style="color:#00d4aa;">57.95%</td>
+            <td class="num" style="color:#00d4aa;">+4.23%</td>
+            <td class="num">13.02</td>
+            <td class="num" style="color:#00d4aa;">41.19%</td>
+            <td class="num" style="color:#00d4aa;">29.6%</td>
+            <td class="num" style="font-weight:bold;color:#58a6ff;">66</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-ORCL" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">12/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:48.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">21/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:84.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">22/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:88.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 6.36% · Margen Neto: 26.36%<br>
+                        Deuda/Equity: 251.72 · FCF Yield: 0%<br>
+                        PEG: 0.77 · EV/EBITDA: 16.57
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $237.97<br>
+                        41 analistas · Máx: $400.0 · Mín: $110.0<br>
+                        Dividendo: 140.0% · Market Cap: $434.11B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('CRM')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">CRM</strong></td>
+            <td>Salesforce</td>
+            <td class="num">$238.01</td>
+            <td data-sector="Technology">Technology</td>
+            <td class="num" style="color:#00d4aa;">34.56%</td>
+            <td class="num" style="color:#00d4aa;">+1.75%</td>
+            <td class="num">14.85</td>
+            <td class="num" style="color:#f0883e;">19.38%</td>
+            <td class="num" style="color:#f0883e;">10.8%</td>
+            <td class="num" style="font-weight:bold;color:#58a6ff;">58</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-CRM" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">12/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:48.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">19/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:76.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">8/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:32.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">19/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:76.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 5.7% · Margen Neto: 21.99%<br>
+                        Deuda/Equity: 110.42 · FCF Yield: 0%<br>
+                        PEG: 0.84 · EV/EBITDA: 17.59
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $285.68<br>
+                        54 analistas · Máx: $475.0 · Mín: $165.0<br>
+                        Dividendo: 74.0% · Market Cap: $195.88B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('NFLX')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">NFLX</strong></td>
+            <td>Netflix</td>
+            <td class="num">$70.46</td>
+            <td data-sector="Communication Services">Communication Services</td>
+            <td class="num" style="color:#00d4aa;">47.46%</td>
+            <td class="num" style="color:#ff4757;">-0.21%</td>
+            <td class="num">18.53</td>
+            <td class="num" style="color:#00d4aa;">49.54%</td>
+            <td class="num" style="color:#f0883e;">13.4%</td>
+            <td class="num" style="font-weight:bold;color:#58a6ff;">53</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-NFLX" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">7/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:28.000000000000004%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">13/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:52.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">14/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:56.00000000000001%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">19/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:76.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 16.08% · Margen Neto: 28.22%<br>
+                        Deuda/Equity: 55.24 · FCF Yield: 0%<br>
+                        PEG: 1.21 · EV/EBITDA: 20.43
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $92.06<br>
+                        45 analistas · Máx: $135.0 · Mín: $57.0<br>
+                        Dividendo: 0% · Market Cap: $293.39B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('GOOGL')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">GOOGL</strong></td>
+            <td>Alphabet (Google)</td>
+            <td class="num">$353.78</td>
+            <td data-sector="Communication Services">Communication Services</td>
+            <td class="num" style="color:#f0883e;">13.31%</td>
+            <td class="num" style="color:#00d4aa;">+0.30%</td>
+            <td class="num">23.21</td>
+            <td class="num" style="color:#00d4aa;">48.68%</td>
+            <td class="num" style="color:#00d4aa;">24.2%</td>
+            <td class="num" style="font-weight:bold;color:#58a6ff;">51</td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
+        </tr>
+        <tr id="detail-GOOGL" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">5/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:20.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">21/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:84.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">12/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:48.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">13/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:52.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 12.96% · Margen Neto: 54.77%<br>
+                        Deuda/Equity: 18.86 · FCF Yield: 0%<br>
+                        PEG: 1.24 · EV/EBITDA: 24.39
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        STRONG_BUY · Precio Objetivo: $430.4<br>
+                        54 analistas · Máx: $515.0 · Mín: $340.0<br>
+                        Dividendo: 25.0% · Market Cap: $4326.71B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('LLY')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">LLY</strong></td>
+            <td>Eli Lilly</td>
+            <td class="num">$1166.51</td>
+            <td data-sector="Healthcare">Healthcare</td>
+            <td class="num" style="color:#f0883e;">9.76%</td>
+            <td class="num" style="color:#ff4757;">-1.36%</td>
+            <td class="num">24.52</td>
+            <td class="num" style="color:#00d4aa;">102.29%</td>
+            <td class="num" style="color:#00d4aa;">47.7%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">50</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-LLY" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">5/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:20.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">19/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:76.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">18/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:72.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">8/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:32.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 20.36% · Margen Neto: 33.53%<br>
+                        Deuda/Equity: 162.07 · FCF Yield: 0%<br>
+                        PEG: 1.15 · EV/EBITDA: 26.03
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $1330.14<br>
+                        29 analistas · Máx: $1600.0 · Mín: $930.0<br>
+                        Dividendo: 59.0% · Market Cap: $1040.23B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('AMD')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">AMD</strong></td>
+            <td>Advanced Micro Devices</td>
+            <td class="num">$605.53</td>
+            <td data-sector="Technology">Technology</td>
+            <td class="num" style="color:#f0883e;">8.05%</td>
+            <td class="num" style="color:#00d4aa;">+1.90%</td>
+            <td class="num">38.52</td>
+            <td class="num" style="color:#f0883e;">10.2%</td>
+            <td class="num" style="color:#00d4aa;">50.1%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">43</td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
+        </tr>
+        <tr id="detail-AMD" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">5/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:20.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">22/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:88.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">5/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:20.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 5.13% · Margen Neto: 15.58%<br>
+                        Deuda/Equity: 6.36 · FCF Yield: 0%<br>
+                        PEG: 0.6 · EV/EBITDA: 102.45
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        STRONG_BUY · Precio Objetivo: $636.21<br>
+                        50 analistas · Máx: $1250.0 · Mín: $365.0<br>
+                        Dividendo: 0% · Market Cap: $988.51B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('META')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">META</strong></td>
+            <td>Meta Platforms</td>
+            <td class="num">$762.50</td>
+            <td data-sector="Communication Services">Communication Services</td>
+            <td class="num" style="color:#ff4757;">3.85%</td>
+            <td class="num" style="color:#00d4aa;">+2.63%</td>
+            <td class="num">22.0</td>
+            <td class="num" style="color:#00d4aa;">29.85%</td>
+            <td class="num" style="color:#00d4aa;">28.0%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">41</td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
+        </tr>
+        <tr id="detail-META" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">8/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:32.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">13/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:52.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">9/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:36.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 14.59% · Margen Neto: 29.83%<br>
+                        Deuda/Equity: 43.0 · FCF Yield: 0%<br>
+                        PEG: 0.98 · EV/EBITDA: 17.92
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        STRONG_BUY · Precio Objetivo: $805.5<br>
+                        58 analistas · Máx: $1050.0 · Mín: $580.0<br>
+                        Dividendo: 28.0% · Market Cap: $1942.47B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('MSFT')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">MSFT</strong></td>
+            <td>Microsoft</td>
+            <td class="num">$543.45</td>
+            <td data-sector="Technology">Technology</td>
+            <td class="num" style="color:#ff4757;">1.4%</td>
+            <td class="num" style="color:#00d4aa;">+0.43%</td>
+            <td class="num">22.96</td>
+            <td class="num" style="color:#00d4aa;">34.04%</td>
+            <td class="num" style="color:#00d4aa;">17.7%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">41</td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
+        </tr>
+        <tr id="detail-MSFT" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">3/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:12.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">17/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:68.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">12/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:48.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">9/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:36.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 14.09% · Margen Neto: 40.3%<br>
+                        Deuda/Equity: 29.12 · FCF Yield: 0%<br>
+                        PEG: 1.76 · EV/EBITDA: 21.04
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        STRONG_BUY · Precio Objetivo: $589.6<br>
+                        53 analistas · Máx: $870.0 · Mín: $440.0<br>
+                        Dividendo: 72.0% · Market Cap: $4035.41B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('AMZN')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">AMZN</strong></td>
+            <td>Amazon</td>
+            <td class="num">$258.58</td>
+            <td data-sector="Consumer Cyclical">Consumer Cyclical</td>
+            <td class="num" style="color:#f0883e;">9.97%</td>
+            <td class="num" style="color:#ff4757;">-0.37%</td>
+            <td class="num">24.74</td>
+            <td class="num" style="color:#00d4aa;">30.56%</td>
+            <td class="num" style="color:#00d4aa;">19.6%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">40</td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
+        </tr>
+        <tr id="detail-AMZN" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">4/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:16.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">16/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:64.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">9/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:36.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 6.59% · Margen Neto: 17.44%<br>
+                        Deuda/Equity: 45.62 · FCF Yield: 0%<br>
+                        PEG: 1.52 · EV/EBITDA: 17.27
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        STRONG_BUY · Precio Objetivo: $331.2<br>
+                        58 analistas · Máx: $405.0 · Mín: $230.0<br>
+                        Dividendo: 0% · Market Cap: $2789.12B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('AAPL')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">AAPL</strong></td>
+            <td>Apple</td>
+            <td class="num">$341.27</td>
+            <td data-sector="Technology">Technology</td>
+            <td class="num" style="color:#ff4757;">1.98%</td>
+            <td class="num" style="color:#00d4aa;">+0.09%</td>
+            <td class="num">35.58</td>
+            <td class="num" style="color:#00d4aa;">148.75%</td>
+            <td class="num" style="color:#00d4aa;">16.4%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">39</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-AAPL" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">0/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:0.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">15/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:60.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">18/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:72.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">6/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:24.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 27.08% · Margen Neto: 27.62%<br>
+                        Deuda/Equity: 78.44 · FCF Yield: 0%<br>
+                        PEG: 2.73 · EV/EBITDA: 29.78
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $329.38<br>
+                        39 analistas · Máx: $405.0 · Mín: $215.0<br>
+                        Dividendo: 32.0% · Market Cap: $4980.56B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('V')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">V</strong></td>
+            <td>Visa</td>
+            <td class="num">$396.06</td>
+            <td data-sector="Financial Services">Financial Services</td>
+            <td class="num" style="color:#ff4757;">0.07%</td>
+            <td class="num" style="color:#00d4aa;">+1.74%</td>
+            <td class="num">26.4</td>
+            <td class="num" style="color:#00d4aa;">61.19%</td>
+            <td class="num" style="color:#f0883e;">14.4%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">39</td>
+            <td><span class="badge-bull">🔹 Strong Buy</span></td>
+        </tr>
+        <tr id="detail-V" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">1/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:4.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">13/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:52.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">16/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:64.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">9/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:36.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 19.11% · Margen Neto: 50.78%<br>
+                        Deuda/Equity: 67.82 · FCF Yield: 0%<br>
+                        PEG: 1.76 · EV/EBITDA: 23.75
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        STRONG_BUY · Precio Objetivo: $420.47<br>
+                        37 analistas · Máx: $466.0 · Mín: $330.0<br>
+                        Dividendo: 68.0% · Market Cap: $743.55B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('JPM')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">JPM</strong></td>
+            <td>JPMorgan Chase</td>
+            <td class="num">$331.43</td>
+            <td data-sector="Financial Services">Financial Services</td>
+            <td class="num" style="color:#f0883e;">9.12%</td>
+            <td class="num" style="color:#ff4757;">-0.86%</td>
+            <td class="num">13.12</td>
+            <td class="num" style="color:#f0883e;">18.01%</td>
+            <td class="num" style="color:#f0883e;">10.2%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">35</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-JPM" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">7/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:28.000000000000004%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">9/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:36.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">8/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:32.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 1.37% · Margen Neto: 34.59%<br>
+                        Deuda/Equity: 0 · FCF Yield: 0%<br>
+                        PEG: 1.54 · EV/EBITDA: 0
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $371.86<br>
+                        22 analistas · Máx: $420.0 · Mín: $305.0<br>
+                        Dividendo: 199.0% · Market Cap: $881.0B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('PG')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">PG</strong></td>
+            <td>Procter & Gamble</td>
+            <td class="num">$153.04</td>
+            <td data-sector="Consumer Defensive">Consumer Defensive</td>
+            <td class="num" style="color:#f0883e;">11.32%</td>
+            <td class="num" style="color:#ff4757;">-0.10%</td>
+            <td class="num">20.69</td>
+            <td class="num" style="color:#00d4aa;">30.29%</td>
+            <td class="num" style="color:#f0883e;">1.5%</td>
+            <td class="num" style="font-weight:bold;color:#f0883e;">31</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-PG" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">3/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:12.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">8/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:32.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">10/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:40.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">10/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:40.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 10.72% · Margen Neto: 18.44%<br>
+                        Deuda/Equity: 64.49 · FCF Yield: 0%<br>
+                        PEG: 3.92 · EV/EBITDA: 15.43
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $161.22<br>
+                        23 analistas · Máx: $186.0 · Mín: $143.0<br>
+                        Dividendo: 284.0% · Market Cap: $355.46B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('KO')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">KO</strong></td>
+            <td>Coca-Cola</td>
+            <td class="num">$90.11</td>
+            <td data-sector="Consumer Defensive">Consumer Defensive</td>
+            <td class="num" style="color:#ff4757;">1.99%</td>
+            <td class="num" style="color:#00d4aa;">+0.36%</td>
+            <td class="num">25.56</td>
+            <td class="num" style="color:#00d4aa;">42.05%</td>
+            <td class="num" style="color:#f0883e;">6.7%</td>
+            <td class="num" style="font-weight:bold;color:#ff4757;">28</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-KO" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">0/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:0.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">11/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:44.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">6/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:24.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 9.4% · Margen Neto: 28.56%<br>
+                        Deuda/Equity: 115.52 · FCF Yield: 0%<br>
+                        PEG: 4.08 · EV/EBITDA: 24.58
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $94.43<br>
+                        23 analistas · Máx: $104.0 · Mín: $75.0<br>
+                        Dividendo: 235.0% · Market Cap: $387.7B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('TSLA')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">TSLA</strong></td>
+            <td>Tesla</td>
+            <td class="num">$375.23</td>
+            <td data-sector="Consumer Cyclical">Consumer Cyclical</td>
+            <td class="num" style="color:#00d4aa;">24.78%</td>
+            <td class="num" style="color:#ff4757;">-0.74%</td>
+            <td class="num">172.13</td>
+            <td class="num" style="color:#f0883e;">4.67%</td>
+            <td class="num" style="color:#00d4aa;">25.5%</td>
+            <td class="num" style="font-weight:bold;color:#ff4757;">20</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-TSLA" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">0/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:0.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">5/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:20.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">0/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:0.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">15/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:60.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 1.93% · Margen Neto: 3.67%<br>
+                        Deuda/Equity: 18.37 · FCF Yield: 0%<br>
+                        PEG: 3.85 · EV/EBITDA: 135.31
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $397.83<br>
+                        38 analistas · Máx: $600.0 · Mín: $128.11<br>
+                        Dividendo: 0% · Market Cap: $1481.99B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        <tr onclick="toggleDetail('COST')" style="cursor:pointer;" class="data-row">
+            <td><strong style="color:#58a6ff;">COST</strong></td>
+            <td>Costco</td>
+            <td class="num">$954.63</td>
+            <td data-sector="Consumer Defensive">Consumer Defensive</td>
+            <td class="num" style="color:#f0883e;">12.8%</td>
+            <td class="num" style="color:#ff4757;">-0.50%</td>
+            <td class="num">38.16</td>
+            <td class="num" style="color:#00d4aa;">28.4%</td>
+            <td class="num" style="color:#f0883e;">11.1%</td>
+            <td class="num" style="font-weight:bold;color:#ff4757;">19</td>
+            <td><span class="badge-buy">🔹 Buy</span></td>
+        </tr>
+        <tr id="detail-COST" style="display:none;background:#0d1117;">
+            <td colspan="11" style="padding:16px 20px;">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #58a6ff;">
+                        <div style="font-size:11px;color:#8b949e;">VALUE</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">0/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:0.0%;background:#58a6ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #00d4aa;">
+                        <div style="font-size:11px;color:#8b949e;">GROWTH</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">5/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:20.0%;background:#00d4aa;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #d2a8ff;">
+                        <div style="font-size:11px;color:#8b949e;">QUALITY</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">4/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:16.0%;background:#d2a8ff;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                    <div style="background:#161b22;padding:10px;border-radius:4px;border-left:3px solid #f0883e;">
+                        <div style="font-size:11px;color:#8b949e;">MOMENTUM</div>
+                        <div style="font-size:18px;font-weight:700;color:#f0f6fc;">10/25</div>
+                        <div style="width:100%;background:#21262d;border-radius:4px;height:4px;margin-top:4px;">
+                            <div style="width:40.0%;background:#f0883e;height:100%;border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;color:#c9d1d9;">
+                    <div>
+                        <strong style="color:#f0f6fc;">📊 Métricas clave</strong><br>
+                        ROIC: 8.66% · Margen Neto: 3.04%<br>
+                        Deuda/Equity: 28.44 · FCF Yield: 0%<br>
+                        PEG: 4.83 · EV/EBITDA: 29.04
+                    </div>
+                    <div>
+                        <strong style="color:#f0f6fc;">🎯 Rating Analistas</strong><br>
+                        BUY · Precio Objetivo: $1060.8<br>
+                        35 analistas · Máx: $1315.0 · Mín: $770.0<br>
+                        Dividendo: 62.0% · Market Cap: $423.02B
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+<!-- ===== TOP 3 ===== -->
+<h2>🏆 Top 3 Oportunidades</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;margin:12px 0;">
+    
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;border-top:3px solid #00d4aa;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:20px;font-weight:700;color:#f0f6fc;">#1 NVDA</span>
+                <span style="font-size:24px;font-weight:700;color:#58a6ff;">68</span>
+            </div>
+            <div style="color:#8b949e;font-size:13px;">Nvidia · Technology</div>
+            <div style="margin:8px 0;font-size:14px;">
+                <span style="color:#f0883e;">⬇️ 6.1%</span>
+                · ROE: 117.21% · Crecimiento: 105.9%
+            </div>
+            <div style="font-size:13px;color:#c9d1d9;">Precio: $228.52 · Objetivo: $328.72 · STRONG_BUY</div>
+        </div>
+        
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;border-top:3px solid #58a6ff;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:20px;font-weight:700;color:#f0f6fc;">#2 AVGO</span>
+                <span style="font-size:24px;font-weight:700;color:#58a6ff;">67</span>
+            </div>
+            <div style="color:#8b949e;font-size:13px;">Broadcom · Technology</div>
+            <div style="margin:8px 0;font-size:14px;">
+                <span style="color:#00d4aa;">⬇️ 27.57%</span>
+                · ROE: 44.25% · Crecimiento: 85.5%
+            </div>
+            <div style="font-size:13px;color:#c9d1d9;">Precio: $357.31 · Objetivo: $531.31 · STRONG_BUY</div>
+        </div>
+        
+        <div style="background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;border-top:3px solid #f0883e;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:20px;font-weight:700;color:#f0f6fc;">#3 ORCL</span>
+                <span style="font-size:24px;font-weight:700;color:#58a6ff;">66</span>
+            </div>
+            <div style="color:#8b949e;font-size:13px;">Oracle · Technology</div>
+            <div style="margin:8px 0;font-size:14px;">
+                <span style="color:#00d4aa;">⬇️ 57.95%</span>
+                · ROE: 41.19% · Crecimiento: 29.6%
+            </div>
+            <div style="font-size:13px;color:#c9d1d9;">Precio: $143.2 · Objetivo: $237.97 · BUY</div>
+        </div>
+        
+</div>
+
+<!-- ===== ANÁLISIS DE RIESGOS ===== -->
+<h2>⚠️ Análisis de Riesgos</h2>
+<div class="risk-grid">
+    <div class="risk-card visible">
+        <h4>🔴 Riesgos Visibles</h4>
+        <p>Corrección técnica en el sector tecnológico · Incertidumbre regulatoria en IA · Desaceleración del crecimiento de ingresos en algunas empresas</p>
+    </div>
+    <div class="risk-card hidden">
+        <h4>⚫ Riesgos No Descontados</h4>
+        <p>Posible recesión global · Conflictos geopolíticos · Burbuja de IA · Cambio en política monetaria de la Fed</p>
+    </div>
+    <div class="risk-card scenario">
+        <h4>📊 Escenarios Alternativos</h4>
+        <p>Escenario bajista: corrección 20-30% adicional · Escenario base: consolidación y recuperación gradual · Escenario alcista: nuevo rally post-verano</p>
+    </div>
+    <div class="risk-card signal">
+        <h4>📡 Señales a Vigilar</h4>
+        <p>Resultados Q2 2026 · Evolución del dólar · Flujos de inversión institucional · Volatilidad VIX</p>
+    </div>
+</div>
+
+<!-- ===== LECTURA CRÍTICA ===== -->
+<h2>📖 Lectura Crítica</h2>
+<div class="callout-danger">
+    <strong>⚠️ ¿Estamos comprando una corrección o el inicio de un mercado bajista?</strong>
+</div>
+<p style="font-size:15px;">La narrativa dominante sugiere que las caídas en el sector tecnológico son oportunidades de compra. Sin embargo, debemos cuestionar si el mercado está descontando correctamente el riesgo de una desaceleración económica más profunda de lo esperado. Las valoraciones, aunque corregidas, siguen siendo elevadas en términos históricos.</p>
+<p style="font-size:15px;">El verdadero riesgo no es la corrección en sí, sino que los fundamentales de las empresas no cumplan con las expectativas de crecimiento implícitas en los precios actuales. La pregunta clave: ¿estamos pagando por crecimiento futuro que podría no materializarse?</p>
+
+<!-- ===== CHECKLIST ===== -->
+<h2>✅ Checklist de Rigor</h2>
+<ul class="check">
+    <li>✅ Datos obtenidos de Yahoo Finance (fuente primaria)</li>
+    <li>✅ Scores calculados con metodología consistente (4 pilares: Value, Growth, Quality, Momentum)</li>
+    <li>✅ Análisis separa hechos de interpretaciones</li>
+    <li>✅ Lenguaje probabilístico, no determinista</li>
+</ul>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <p><strong>Aviso.</strong> Este dashboard es información general de mercado, no asesoramiento financiero ni recomendación de inversión personalizada. Las decisiones de inversión son tuyas y conllevan riesgo de pérdida. Para asesoramiento personalizado acude a una entidad autorizada (CNMV en España o equivalente).</p>
+    <p>Datos: Yahoo Finance · Generado automáticamente · 14/10/2026 09:58 CEST</p>
+</footer>
+
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// Variables para filtros y ordenación
+let sortColumn = -1;
+let sortAsc = true;
+
+// Función para expandir/colapsar detalles
+function toggleDetail(ticker) {
+    const detailRow = document.getElementById('detail-' + ticker);
+    if (detailRow) {
+        if (detailRow.style.display === 'none') {
+            detailRow.style.display = 'table-row';
+        } else {
+            detailRow.style.display = 'none';
+        }
+    }
+}
+
+// Función para ordenar tabla
+function ordenarTabla(col) {
+    if (sortColumn === col) {
+        sortAsc = !sortAsc;
+    } else {
+        sortColumn = col;
+        sortAsc = true;
+    }
+    aplicarFiltros();
+}
+
+// Función principal de filtrado y ordenación
+function aplicarFiltros() {
+    const sector = document.getElementById('sectorFilter').value;
+    const minScore = parseInt(document.getElementById('scoreFilter').value);
+    const rating = document.getElementById('ratingFilter').value;
+    document.getElementById('scoreLabel').textContent = minScore;
+
+    const tbody = document.getElementById('tableBody');
+    const rows = tbody.querySelectorAll('tr');
+    let visibleRows = [];
+
+    rows.forEach(row => {
+        // Saltamos filas de detalle
+        if (row.id && row.id.startsWith('detail-')) return;
+
+        const cells = row.querySelectorAll('td');
+        if (cells.length < 11) return;
+
+        const rowSector = cells[3].textContent.trim();
+        const rowScore = parseInt(cells[9].textContent.trim());
+        const rowRating = cells[10].textContent.trim().toLowerCase();
+
+        let visible = true;
+        if (sector !== 'all' && rowSector !== sector) visible = false;
+        if (rowScore < minScore) visible = false;
+        if (rating !== 'all' && !rowRating.includes(rating.replace('_', ' '))) visible = false;
+
+        // Ocultar detalle asociado
+        const ticker = cells[0].textContent.trim();
+        const detailRow = document.getElementById('detail-' + ticker);
+        if (detailRow) {
+            detailRow.style.display = 'none';
+        }
+
+        if (visible) {
+            row.style.display = '';
+            visibleRows.push({
+                row: row,
+                cells: cells,
+                ticker: ticker
+            });
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    document.getElementById('resultCount').textContent = 'Mostrando ' + visibleRows.length + ' acciones';
+
+    // Ordenación (sobre filas visibles)
+    if (visibleRows.length > 1 && sortColumn >= 0) {
+        visibleRows.sort((a, b) => {
+            let aVal = a.cells[sortColumn].textContent.trim();
+            let bVal = b.cells[sortColumn].textContent.trim();
+
+            // Intentar convertir a número
+            let aNum = parseFloat(aVal.replace(/,/g, '').replace(/[^0-9.-]/g, ''));
+            let bNum = parseFloat(bVal.replace(/,/g, '').replace(/[^0-9.-]/g, ''));
+
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return sortAsc ? aNum - bNum : bNum - aNum;
+            }
+            return sortAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        });
+
+        // Reordenar en el DOM
+        visibleRows.forEach(({row}) => tbody.appendChild(row));
+    }
+}
+
+function resetearFiltros() {
+    document.getElementById('sectorFilter').value = 'all';
+    document.getElementById('scoreFilter').value = '0';
+    document.getElementById('ratingFilter').value = 'all';
+    document.getElementById('scoreLabel').textContent = '0';
+    aplicarFiltros();
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    aplicarFiltros();
+});
+</script>
+
+</body>
+</html>
