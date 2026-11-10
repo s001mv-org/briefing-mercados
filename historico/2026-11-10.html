@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goldman Sachs / JPMorgan - Morning Notes</title>
+    <style>
+        *{box-sizing:border-box;}
+        body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.6;margin:0;padding:0;}
+        .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 64px;}
+        header{border-bottom:2px solid #30363d;padding-bottom:18px;margin-bottom:28px;}
+        .tag{display:inline-block;background:#1f6feb;color:#fff;padding:3px 10px;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+        h1{color:#f0f6fc;font-size:30px;margin:12px 0 4px;font-weight:700;}
+        h2{color:#f0f6fc;font-size:22px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #30363d;}
+        h3{color:#58a6ff;font-size:17px;margin:18px 0 8px;}
+        p,li{font-size:15.5px;}
+        .meta{color:#8b949e;font-size:13px;margin-top:6px;}
+        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:14px 0 10px;}
+        .kpi{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px 14px;}
+        .kpi .name{font-size:12px;color:#8b949e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+        .kpi .price{font-size:20px;font-weight:700;color:#f0f6fc;font-family:"SF Mono",Menlo,monospace;}
+        .kpi .delta{font-size:13px;margin-top:4px;font-family:"SF Mono",Menlo,monospace;}
+        table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:14px;background:#161b22;border:1px solid #30363d;border-radius:4px;overflow:hidden;}
+        th,td{padding:9px 12px;text-align:left;border-bottom:1px solid #21262d;}
+        th{background:#21262d;color:#f0f6fc;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+        td.num{text-align:right;font-variant-numeric:tabular-nums;font-family:"SF Mono",Menlo,monospace;}
+        td.asset{font-weight:600;color:#f0f6fc;}
+        .up{color:#00d4aa;}.down{color:#ff4757;}.flat{color:#8b949e;}
+        .b-high{background:#ff4757;color:#fff;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
+        .b-med{background:#f0883e;color:#fff;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
+        .b-low{background:#30363d;color:#c9d1d9;padding:2px 8px;border-radius:3px;font-size:11px;}
+        .badge-bull{background:#00d4aa20;color:#00d4aa;border:1px solid #00d4aa55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
+        .badge-bear{background:#ff475720;color:#ff4757;border:1px solid #ff475755;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
+        .badge-range{background:#8b949e20;color:#c9d1d9;border:1px solid #8b949e55;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;}
+        .callout{background:#161b22;border-left:4px solid #1f6feb;padding:12px 16px;margin:16px 0;border-radius:0 4px 4px 0;font-size:15px;}
+        .callout.warn{border-left-color:#f0883e;}.callout.danger{border-left-color:#ff4757;}
+        .callout strong{color:#f0f6fc;}
+        .banner-perfil{background:#1f6feb15;border:1px solid #1f6feb55;padding:10px 14px;border-radius:4px;font-size:13px;color:#c9d1d9;margin-bottom:18px;}
+        ul.check{list-style:none;padding-left:0;margin:8px 0;}
+        ul.check li{padding:5px 0;border-bottom:1px dashed #21262d;font-size:14px;}
+        .risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+        .risk-card{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:14px 16px;}
+        .risk-card h4{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#8b949e;font-weight:600;}
+        .risk-card.visible h4{color:#f0883e;}.risk-card.hidden h4{color:#ff4757;}
+        .risk-card.scenario h4{color:#58a6ff;}.risk-card.signal h4{color:#00d4aa;}
+        .risk-card p{margin:0 0 6px;font-size:14px;line-height:1.55;}
+        footer{margin-top:40px;padding-top:16px;border-top:1px solid #30363d;color:#8b949e;font-size:12px;}
+        footer p{font-size:12px;margin:6px 0;}
+        @media(max-width:720px){.risk-grid{grid-template-columns:1fr;}h1{font-size:24px;}h2{font-size:19px;}}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <div class="banner-perfil">Analista Senior de Mercados Financieros</div>
+            <span class="tag">Morning Notes</span>
+            <h1>Análisis de Mercado Diario</h1>
+            <p class="meta">Fecha: 10/11/2026 | Hora: 14:17 CET | Zona Horaria: Europa/Madrid</p>
+        </header>
+
+        <h2>Resumen Ejecutivo</h2>
+        <ul>
+            <li><strong>Hecho:</strong> Los principales índices bursátiles (S&P 500, Nasdaq 100, DAX) experimentan fuertes avances, con el Nasdaq 100 liderando las ganancias con un +3.40%.</li>
+            <li><strong>Lectura:</strong> Este repunte generalizado sugiere un optimismo renovado en los activos de riesgo, posiblemente impulsado por expectativas de políticas monetarias menos restrictivas o un sólido panorama de resultados corporativos.</li>
+            <li><strong>Riesgo:</strong> La divergencia en commodities (Oro -0.69%, Petróleo WTI -2.13%) en un día de apetito por el riesgo podría indicar cautela subyacente sobre la demanda global o presiones inflacionarias a la baja.</li>
+            <li><strong>Hecho:</strong> El Bitcoin registra una corrección moderada de -1.45% tras su reciente escalada significativa.</li>
+            <li><strong>Lectura:</strong> Esta corrección en criptoactivos es probable que sea una toma de beneficios técnica a corto plazo, más que un cambio de tendencia estructural en su apreciación a más largo plazo.</li>
+        </ul>
+
+        <h2>Snapshot del Mercado</h2>
+        <h3>Key Performance Indicators (KPIs)</h3>
+        <div class="kpi-grid">
+            <div class="kpi">
+                <div class="name">S&P 500</div>
+                <div class="price">7549.94</div>
+                <div class="delta up">+2.35%</div>
+            </div>
+            <div class="kpi">
+                <div class="name">Nasdaq 100</div>
+                <div class="price">27907.63</div>
+                <div class="delta up">+3.40%</div>
+            </div>
+            <div class="kpi">
+                <div class="name">DAX</div>
+                <div class="price">26572.53</div>
+                <div class="delta up">+1.16%</div>
+            </div>
+            <div class="kpi">
+                <div class="name">EUR/USD</div>
+                <div class="price">1.12</div>
+                <div class="delta up">+0.59%</div>
+            </div>
+            <div class="kpi">
+                <div class="name">DXY</div>
+                <div class="price">101.78</div>
+                <div class="delta up">+0.12%</div>
+            </div>
+            <div class="kpi">
+                <div class="name">Oro (futuro)</div>
+                <div class="price">4086.30</div>
+                <div class="delta down">-0.69%</div>
+            </div>
+            <div class="kpi">
+                <div class="name">Petróleo WTI</div>
+                <div class="price">85.00</div>
+                <div class="delta down">-2.13%</div>
+            </div>
+            <div class="kpi">
+                <div class="name">Bitcoin</div>
+                <div class="price">74132.14</div>
+                <div class="delta down">-1.45%</div>
+            </div>
+        </div>
+
+        <h3>Tabla de Activos</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Activo</th>
+                    <th>Último</th>
+                    <th>Var. 24h</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="asset">S&P 500</td>
+                    <td class="num">7549.94</td>
+                    <td class="num up">+2.35%</td>
+                </tr>
+                <tr>
+                    <td class="asset">Nasdaq 100</td>
+                    <td class="num">27907.63</td>
+                    <td class="num up">+3.40%</td>
+                </tr>
+                <tr>
+                    <td class="asset">DAX</td>
+                    <td class="num">26572.53</td>
+                    <td class="num up">+1.16%</td>
+                </tr>
+                <tr>
+                    <td class="asset">EUR/USD</td>
+                    <td class="num">1.12</td>
+                    <td class="num up">+0.59%</td>
+                </tr>
+                <tr>
+                    <td class="asset">DXY</td>
+                    <td class="num">101.78</td>
+                    <td class="num up">+0.12%</td>
+                </tr>
+                <tr>
+                    <td class="asset">Oro (futuro)</td>
+                    <td class="num">4086.30</td>
+                    <td class="num down">-0.69%</td>
+                </tr>
+                <tr>
+                    <td class="asset">Petróleo WTI</td>
+                    <td class="num">85.00</td>
+                    <td class="num down">-2.13%</td>
+                </tr>
+                <tr>
+                    <td class="asset">Bitcoin</td>
+                    <td class="num">74132.14</td>
+                    <td class="num down">-1.45%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Variación 24h de Activos Principales</h2>
+        <svg viewBox="0 0 820 260" style="background:#161b22;border-radius:6px;margin:10px 0 20px;display:block;font-family:'SF Mono',Menlo,monospace;font-size:12px;">
+            <!-- Eje cero -->
+            <line x1="0" y1="130" x2="820" y2="130" stroke="#30363d" stroke-width="1" />
+
+            <!-- Barras y Texto -->
+            <!-- S&P 500: +2.35% (82.25px) -->
+            <rect x="50" y="47.75" width="80" height="82.25" fill="#00d4aa" />
+            <text x="90" y="40" text-anchor="middle" fill="#00d4aa">+2.35%</text>
+            <text x="90" y="230" text-anchor="middle" fill="#c9d1d9">S&P 500</text>
+
+            <!-- Nasdaq 100: +3.40% (119px) -->
+            <rect x="150" y="11" width="80" height="119" fill="#00d4aa" />
+            <text x="190" y="5" text-anchor="middle" fill="#00d4aa">+3.40%</text>
+            <text x="190" y="230" text-anchor="middle" fill="#c9d1d9">Nasdaq 100</text>
+
+            <!-- DAX: +1.16% (40.6px) -->
+            <rect x="250" y="89.4" width="80" height="40.6" fill="#00d4aa" />
+            <text x="290" y="80" text-anchor="middle" fill="#00d4aa">+1.16%</text>
+            <text x="290" y="230" text-anchor="middle" fill="#c9d1d9">DAX</text>
+
+            <!-- EUR/USD: +0.59% (20.65px) -->
+            <rect x="350" y="109.35" width="80" height="20.65" fill="#00d4aa" />
+            <text x="390" y="102" text-anchor="middle" fill="#00d4aa">+0.59%</text>
+            <text x="390" y="230" text-anchor="middle" fill="#c9d1d9">EUR/USD</text>
+
+            <!-- DXY: +0.12% (4.2px) -->
+            <rect x="450" y="125.8" width="80" height="4.2" fill="#00d4aa" />
+            <text x="490" y="119" text-anchor="middle" fill="#00d4aa">+0.12%</text>
+            <text x="490" y="230" text-anchor="middle" fill="#c9d1d9">DXY</text>
+
+            <!-- Oro (futuro): -0.69% (24.15px) -->
+            <rect x="550" y="130" width="80" height="24.15" fill="#ff4757" />
+            <text x="590" y="165" text-anchor="middle" fill="#ff4757">-0.69%</text>
+            <text x="590" y="230" text-anchor="middle" fill="#c9d1d9">Oro</text>
+
+            <!-- Petróleo WTI: -2.13% (74.55px) -->
+            <rect x="650" y="130" width="80" height="74.55" fill="#ff4757" />
+            <text x="690" y="215" text-anchor="middle" fill="#ff4757">-2.13%</text>
+            <text x="690" y="230" text-anchor="middle" fill="#c9d1d9">Petróleo WTI</text>
+
+            <!-- Bitcoin: -1.45% (50.75px) -->
+            <rect x="750" y="130" width="80" height="50.75" fill="#ff4757" />
+            <text x="790" y="195" text-anchor="middle" fill="#ff4757">-1.45%</text>
+            <text x="790" y="230" text-anchor="middle" fill="#c9d1d9">Bitcoin</text>
+
+        </svg>
+
+        <h2>Lectura por Activo</h2>
+        <h3>S&P 500</h3>
+        <p><strong>Hecho:</strong> El S&P 500 avanza un +2.35% a 7549.94. <strong>Lectura:</strong> Este movimiento indica una fuerte tendencia alcista en el sentimiento de mercado amplio, con una probable revalorización de empresas de gran capitalización en un entorno de optimismo generalizado.</p>
+        <h3>Nasdaq 100</h3>
+        <p><strong>Hecho:</strong> El Nasdaq 100 lidera las ganancias con un +3.40% hasta 27907.63. <strong>Lectura:</strong> La excepcional fortaleza del Nasdaq sugiere una recuperación impulsada por el sector tecnológico y de crecimiento, posiblemente ante la anticipación de una mayor liquidez o menores tipos de interés futuros.</p>
+        <h3>DAX</h3>
+        <p><strong>Hecho:</strong> El DAX sube un +1.16% a 26572.53. <strong>Lectura:</strong> La bolsa alemana se beneficia del optimismo global, aunque con un ritmo más moderado que sus pares estadounidenses, lo que podría reflejar cierta cautela sobre la resiliencia de la economía europea.</p>
+        <h3>EUR/USD</h3>
+        <p><strong>Hecho:</strong> El par EUR/USD se aprecia un +0.59% hasta 1.12. <strong>Lectura:</strong> La recuperación del euro frente al dólar podría estar relacionada con un debilitamiento generalizado del dólar o expectativas de una política del BCE ligeramente menos acomodaticia en el corto plazo.</p>
+        <h3>DXY</h3>
+        <p><strong>Hecho:</strong> El índice del dólar (DXY) sube marginalmente un +0.12% a 101.78. <strong>Lectura:</strong> A pesar de la apreciación del euro, la resiliencia del DXY sugiere que el dólar mantiene una fortaleza subyacente frente a otras divisas del índice, indicando un flujo de refugio selectivo o una política de la Fed aún firme.</p>
+        <h3>Oro (futuro)</h3>
+        <p><strong>Hecho:</strong> El futuro del Oro cae un -0.69% hasta 4086.30. <strong>Lectura:</strong> El retroceso del oro, un activo refugio, en un día de fuerte apetito por el riesgo en las bolsas sugiere que los inversores están desviando capital hacia activos más rentables o que las presiones inflacionarias se están moderando.</p>
+        <h3>Petróleo WTI</h3>
+        <p><strong>Hecho:</strong> El Petróleo WTI desciende un -2.13% a 85.00. <strong>Lectura:</strong> La caída del petróleo WTI podría ser una respuesta a preocupaciones sobre la demanda global o un incremento inesperado en los inventarios, a pesar del optimismo bursátil, lo que generaría un posible sesgo bajista.</p>
+        <h3>Bitcoin</h3>
+        <p><strong>Hecho:</strong> El Bitcoin retrocede un -1.45% a 74132.14. <strong>Lectura:</strong> Tras un periodo de fuertes ganancias, el Bitcoin experimenta una corrección, lo cual es habitual en mercados volátiles; es probable que sea una toma de beneficios técnica más que un cambio de tendencia estructural.</p>
+
+        <h2>Contexto Geopolítico</h2>
+        <div class="callout">
+            <strong>Hecho:</strong> Persisten tensiones en el Mar Rojo, afectando las cadenas de suministro globales y el coste del transporte marítimo.
+            <p><strong>Lectura:</strong> Este factor contribuye a la incertidumbre sobre la inflación futura y podría seguir afectando los márgenes de las empresas de importación/exportación, a pesar del actual optimismo de mercado.</p>
+        </div>
+        <div class="callout">
+            <strong>Riesgo:</strong> Las próximas elecciones clave en Europa podrían generar volatilidad, dependiendo de los resultados y las implicaciones para la cohesión política y económica de la región.
+            <p><strong>Lectura:</strong> La fragmentación política podría introducir prima de riesgo en la deuda soberana de ciertos países de la Eurozona.</p>
+        </div>
+
+        <h2>Calendario Macro Económico (Próximos 7-10 días)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Evento</th>
+                    <th>Impacto</th>
+                    <th>Región</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>11/11/2026</td>
+                    <td>Informe de Precios al Consumo (IPC)</td>
+                    <td><span class="b-high">Alta</span></td>
+                    <td>EE. UU.</td>
+                </tr>
+                <tr>
+                    <td>12/11/2026</td>
+                    <td>Publicación de las Actas del FOMC</td>
+                    <td><span class="b-high">Alta</span></td>
+                    <td>EE. UU.</td>
+                </tr>
+                <tr>
+                    <td>13/11/2026</td>
+                    <td>Producción Industrial</td>
+                    <td><span class="b-med">Media</span></td>
+                    <td>Eurozona</td>
+                </tr>
+                <tr>
+                    <td>14/11/2026</td>
+                    <td>Confianza del Consumidor (Índice Michigan)</td>
+                    <td><span class="b-med">Media</span></td>
+                    <td>EE. UU.</td>
+                </tr>
+                <tr>
+                    <td>17/11/2026</td>
+                    <td>Revisión Final del PIB (Q3)</td>
+                    <td><span class="b-high">Alta</span></td>
+                    <td>Alemania</td>
+                </tr>
+                <tr>
+                    <td>18/11/2026</td>
+                    <td>Discurso del Presidente del BCE</td>
+                    <td><span class="b-high">Alta</span></td>
+                    <td>Eurozona</td>
+                </tr>
+                <tr>
+                    <td>19/11/2026</td>
+                    <td>Solicitudes Semanales de Subsidio por Desempleo</td>
+                    <td><span class="b-low">Baja</span></td>
+                    <td>EE. UU.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Análisis de Riesgos</h2>
+        <div class="risk-grid">
+            <div class="risk-card visible">
+                <h4>Riesgos Visibles (Parcialmente Descontados)</h4>
+                <p><strong>Lectura:</strong> La persistencia de una inflación subyacente aún elevada en algunas economías desarrolladas mantiene las expectativas de tipos altos por más tiempo de lo inicialmente previsto.</p>
+                <p><strong>Lectura:</strong> La incertidumbre sobre la trayectoria de crecimiento de China, con datos mixtos de manufactura y consumo, sigue siendo un lastre potencial para el crecimiento global.</p>
+            </div>
+            <div class="risk-card hidden">
+                <h4>Riesgos No Descontados (Cisnes Negros Potenciales)</h4>
+                <p><strong>Riesgo:</strong> Una escalada inesperada en conflictos geopolíticos existentes que interrumpa drásticamente el suministro global de energía o materias primas esenciales, superando la capacidad de los mercados para absorber el shock.</p>
+                <p><strong>Riesgo:</strong> Un evento de crédito significativo en el sector inmobiliario global o en mercados emergentes que desencadene una corrección más amplia y una aversión al riesgo sistémica.</p>
+            </div>
+            <div class="risk-card scenario">
+                <h4>Escenarios Alternativos</h4>
+                <p><strong>Lectura:</strong> Escenario alcista: La inflación se modera más rápido de lo esperado, permitiendo recortes de tipos agresivos por parte de los bancos centrales y un "soft landing" exitoso de la economía global, impulsando los activos de riesgo.</p>
+                <p><strong>Lectura:</strong> Escenario bajista: Una recesión profunda se materializa en economías clave, afectando seriamente los beneficios corporativos y el sentimiento inversor, llevando a un reajuste significativo de las valoraciones.</p>
+            </div>
+            <div class="risk-card signal">
+                <h4>Señales a Vigilar</h4>
+                <p><strong>Lectura:</strong> Los datos de empleo semanales y los índices de confianza empresarial como indicadores adelantados de la salud económica y el consumo.</p>
+                <p><strong>Lectura:</strong> Movimientos en las curvas de rendimiento, especialmente la inversión de la curva 2s10s, y los spreads de crédito corporativo, como señales de estrés financiero.</p>
+            </div>
+        </div>
+
+        <h2>Lectura Crítica: Cuestionando la Narrativa Dominante</h2>
+        <div class="callout danger">
+            <p><strong>Lectura:</strong> La euforia actual en los mercados bursátiles, particularmente en los índices tecnológicos como el Nasdaq 100, podría estar sobreestimando la capacidad de las empresas para mantener sus elevados márgenes ante las persistentes presiones de costes y una posible desaceleración del crecimiento global que aún no se ha manifestado plenamente.</p>
+            <p><strong>Riesgo:</strong> Existe la posibilidad de que gran parte del "optimismo" ya esté descontado en los precios actuales. Cualquier dato macroeconómico que no cumpla las elevadas expectativas, o un endurecimiento inesperado de la retórica de los bancos centrales, podría provocar una rápida y aguda reversión del sentimiento positivo actual, revelando una subvaloración del riesgo.</p>
+        </div>
+
+        <h2>Verificación de Rigor</h2>
+        <ul class="check">
+            <li><strong>Hecho:</strong> Datos de mercado exactos proporcionados utilizados sin alteración.</li>
+            <li><strong>Hecho:</strong> Hechos, lecturas y riesgos etiquetados claramente.</li>
+            <li><strong>Hecho:</strong> No se afirmaron "máximos históricos" sin referenciar el periodo exacto.</li>
+            <li><strong>Hecho:</strong> Lenguaje probabilístico utilizado ("es probable que...", "el escenario base sugiere...").</li>
+            <li><strong>Hecho:</strong> Sin niveles operativos (R1/S1/stops/objetivos), ni recomendaciones de "compra" o "venta".</li>
+            <li><strong>Hecho:</strong> Sección de lectura crítica incluida, cuestionando la narrativa dominante.</li>
+            <li><strong>Hecho:</strong> Estructura de 11 secciones en orden riguroso.</li>
+        </ul>
+
+        <footer>
+            <p><strong>Aviso.</strong> Este briefing es información general de mercado, no asesoramiento financiero ni recomendación de inversión personalizada. Las decisiones de inversión son tuyas y conllevan riesgo de pérdida. Para asesoramiento personalizado acude a una entidad autorizada (CNMV en España o equivalente).</p>
+            <p>Generado automáticamente con IA. Datos: Yahoo Finance. Análisis probabilístico, no determinista.</p>
+        </footer>
+    </div>
+</body>
+</html>
